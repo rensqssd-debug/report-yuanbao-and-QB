@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>夸克多平台用户深度洞察报告</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef7 100%);
+  color: #2c3e50;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ===== Header ===== */
+.header {
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  color: white;
+  padding: 60px 20px 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="30" r="1.5" fill="white" opacity="0.1"/><circle cx="80" cy="60" r="2" fill="white" opacity="0.1"/><circle cx="50" cy="20" r="1" fill="white" opacity="0.1"/></svg>');
+}
+.header h1 {
+  font-size: 42px; font-weight: 700; margin-bottom: 15px;
+  position: relative; z-index: 1;
+}
+.header .subtitle {
+  font-size: 18px; opacity: 0.9; position: relative; z-index: 1;
+}
+.header .meta {
+  margin-top: 20px; font-size: 14px; opacity: 0.85;
+  position: relative; z-index: 1;
+}
+
+/* ===== Container ===== */
+.container {
+  max-width: 1200px;
+  margin: -40px auto 40px;
+  padding: 0 20px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ===== 关键指标卡 ===== */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  transition: transform 0.3s, box-shadow 0.3s;
+  border-top: 4px solid #4a90e2;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+.stat-card .label {
+  font-size: 14px; color: #7f8c8d; margin-bottom: 8px;
+}
+.stat-card .value {
+  font-size: 32px; font-weight: 700; color: #2c3e50;
+}
+.stat-card .hint {
+  font-size: 13px; color: #95a5a6; margin-top: 6px;
+}
+.stat-card.positive { border-top-color: #27ae60; }
+.stat-card.negative { border-top-color: #e74c3c; }
+.stat-card.warning { border-top-color: #f39c12; }
+
+/* ===== 章节 ===== */
+.section {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+.section h2 {
+  font-size: 24px;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 3px solid #4a90e2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section h2::before {
+  content: '';
+  width: 6px; height: 24px;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  border-radius: 3px;
+}
+.section h3 {
+  font-size: 18px;
+  color: #34495e;
+  margin: 20px 0 12px;
+}
+.section p {
+  color: #555; margin-bottom: 12px;
+}
+
+/* ===== 洞察卡片 ===== */
+.insight-card {
+  background: #f8f9fb;
+  border-left: 4px solid #4a90e2;
+  padding: 20px 24px;
+  margin: 16px 0;
+  border-radius: 0 8px 8px 0;
+}
+.insight-card .insight-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+.insight-card .insight-content {
+  color: #555; font-size: 14px;
+}
+.insight-card.highlight-red { border-left-color: #e74c3c; background: #fdf4f3; }
+.insight-card.highlight-green { border-left-color: #27ae60; background: #f0f9f4; }
+.insight-card.highlight-orange { border-left-color: #f39c12; background: #fdf8ef; }
+
+/* ===== 图表容器 ===== */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 20px;
+  margin: 20px 0;
+}
+.chart-box {
+  background: white;
+  border: 1px solid #ecf0f1;
+  border-radius: 8px;
+  padding: 16px;
+}
+.chart-box .chart-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.chart {
+  width: 100%;
+  height: 320px;
+}
+
+/* ===== 平台标签 ===== */
+.platform-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ecf0f1;
+}
+.platform-tab {
+  padding: 8px 18px;
+  border-radius: 20px;
+  background: #ecf0f1;
+  color: #7f8c8d;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: none;
+}
+.platform-tab:hover {
+  background: #dfe6e9;
+}
+.platform-tab.active {
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  color: white;
+  box-shadow: 0 2px 8px rgba(74,144,226,0.4);
+}
+
+/* ===== 可展开模块 ===== */
+.accordion {
+  margin: 16px 0;
+}
+.accordion-item {
+  background: white;
+  border: 1px solid #ecf0f1;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+.accordion-item:hover {
+  border-color: #4a90e2;
+}
+.accordion-header {
+  padding: 16px 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  transition: background 0.2s;
+  user-select: none;
+}
+.accordion-header:hover {
+  background: #f8f9fb;
+}
+.accordion-header.active {
+  background: linear-gradient(90deg, #f0f7ff 0%, white 100%);
+  border-bottom: 1px solid #ecf0f1;
+}
+.accordion-header .title {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 15px;
+}
+.accordion-header .badge {
+  background: #4a90e2;
+  color: white;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  margin-left: 10px;
+}
+.accordion-header .arrow {
+  transition: transform 0.3s;
+  color: #7f8c8d;
+  font-size: 14px;
+}
+.accordion-header.active .arrow {
+  transform: rotate(180deg);
+  color: #4a90e2;
+}
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out;
+}
+.accordion-body.active {
+  max-height: 5000px;
+  transition: max-height 0.6s ease-in;
+}
+.accordion-body-inner {
+  padding: 20px;
+}
+
+/* ===== 佐证原贴 ===== */
+.evidence-post {
+  background: #fafbfc;
+  border: 1px solid #e8ecef;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 12px 0;
+  position: relative;
+}
+.evidence-post .post-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.evidence-post .tag {
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.tag-sentiment-pos { background: #d4edda; color: #155724; }
+.tag-sentiment-neg { background: #f8d7da; color: #721c24; }
+.tag-sentiment-neu { background: #e2e3e5; color: #383d41; }
+.tag-voc-A { background: #fff3cd; color: #856404; }
+.tag-voc-B { background: #d1ecf1; color: #0c5460; }
+.tag-voc-C { background: #e2e3e5; color: #495057; }
+.tag-topic { background: #cfe2ff; color: #052c65; }
+.tag-interaction { background: #f5e6ff; color: #5a189a; }
+.tag-expression { background: #ffe5d4; color: #6b2c00; }
+.evidence-post .post-title {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.evidence-post .post-content {
+  color: #555;
+  font-size: 13px;
+  line-height: 1.7;
+  padding: 10px 12px;
+  background: white;
+  border-left: 3px solid #4a90e2;
+  border-radius: 0 4px 4px 0;
+  font-style: normal;
+}
+.evidence-post .post-content::before {
+  content: '「';
+  color: #4a90e2;
+  font-size: 18px;
+  font-weight: bold;
+}
+.evidence-post .post-content::after {
+  content: '」';
+  color: #4a90e2;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* ===== 数据表格 ===== */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 14px;
+}
+.data-table th {
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  color: white;
+  padding: 12px 14px;
+  text-align: left;
+  font-weight: 600;
+}
+.data-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid #ecf0f1;
+}
+.data-table tr:hover {
+  background: #f8f9fb;
+}
+.data-table .bar-cell {
+  position: relative;
+}
+.bar-track {
+  background: #ecf0f1;
+  height: 18px;
+  border-radius: 9px;
+  position: relative;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4a90e2, #74b9ff);
+  border-radius: 9px;
+  transition: width 0.8s;
+}
+.bar-label {
+  position: absolute;
+  left: 8px;
+  top: 0;
+  line-height: 18px;
+  font-size: 11px;
+  color: #fff;
+  font-weight: 600;
+  text-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
+
+/* ===== 情感对比条 ===== */
+.sentiment-bar {
+  display: flex;
+  height: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 8px 0;
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
+}
+.sent-pos { background: #27ae60; }
+.sent-neu { background: #95a5a6; }
+.sent-neg { background: #e74c3c; }
+.sent-seg {
+  color: white;
+  font-size: 11px;
+  text-align: center;
+  line-height: 24px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== 话题传播原因分析 ===== */
+.reason-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+.reason-card {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fb 100%);
+  border: 1px solid #e8ecef;
+  border-radius: 10px;
+  padding: 20px;
+  transition: all 0.3s;
+}
+.reason-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  border-color: #4a90e2;
+}
+.reason-card .icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, #4a90e2, #357abd);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: white;
+  margin-bottom: 12px;
+}
+.reason-card h4 {
+  font-size: 16px;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+.reason-card p {
+  color: #7f8c8d;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ===== 导航 ===== */
+.sidebar {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  border-radius: 10px;
+  padding: 12px 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  z-index: 100;
+}
+.sidebar a {
+  display: block;
+  padding: 8px 12px;
+  color: #7f8c8d;
+  text-decoration: none;
+  font-size: 13px;
+  border-radius: 6px;
+  margin-bottom: 2px;
+  transition: all 0.2s;
+}
+.sidebar a:hover, .sidebar a.active {
+  background: #4a90e2;
+  color: white;
+}
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+}
+
+/* ===== Scroll动画 ===== */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===== Footer ===== */
+.footer {
+  text-align: center;
+  padding: 30px 20px;
+  color: #95a5a6;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+
+<!-- 侧边导航 -->
+<div class="sidebar">
+  <a href="#overview">📊 总览</a>
+  <a href="#platforms">🏢 平台分析</a>
+  <a href="#insights">💡 核心洞察</a>
+  <a href="#reasons">🔥 传播原因</a>
+  <a href="#sentiment">❤️ 情感分析</a>
+  <a href="#recommendations">🎯 策略建议</a>
+  <a href="#taxonomy-optimize">🔧 体系优化</a>
+  <a href="#appendix">📎 附录</a>
+</div>
+
+<div class="header">
+  <h1>夸克多平台用户深度洞察报告</h1>
+  <div class="subtitle">基于10个主流平台 · 46,413条数据 · 8大话题维度深度解析</div>
+  <div class="meta">📅 数据周期：2026-05 · 📊 分析方法：种子句匹配 + 情感分析 + 跨平台对比</div>
+</div>
+
+<div class="container">
+  
+  <!-- ===== 总览卡片 ===== -->
+  <section id="overview" class="fade-in">
+    <div class="stat-cards">
+      <div class="stat-card">
+        <div class="label">分析平台数</div>
+        <div class="value">10</div>
+        <div class="hint">覆盖社交/问答/投诉/电商等多元场景</div>
+      </div>
+      <div class="stat-card positive">
+        <div class="label">覆盖数据量</div>
+        <div class="value">46,413</div>
+        <div class="hint">经过质量过滤的高质量UGC内容</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">识别话题</div>
+        <div class="value">8大</div>
+        <div class="hint">搜索/网盘/AI能力/浏览器/品牌营销等</div>
+      </div>
+      <div class="stat-card warning">
+        <div class="label">负面聚集平台</div>
+        <div class="value">黑猫投诉</div>
+        <div class="hint">100%负向 · 自动续费问题集中</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== 核心洞察摘要 ===== -->
+  <section class="section fade-in" id="insights">
+    <h2>💡 核心洞察摘要</h2>
+    <p style="color:#7f8c8d; font-size:14px; margin-bottom:20px;">基于10个平台46,413条已分类内容的二级话题细分，提炼6大核心洞察，每条洞察均附具体讨论话题与真实原贴佐证。</p>
+    
+    <!-- ========== 洞察 1 ========== -->
+    <div class="insight-card">
+      <div class="insight-title">💼 洞察 1：网盘 vs 搜索，10平台呈现3种截然不同的用户认知模式</div>
+      <div class="insight-content">
+        <div style="margin-bottom:12px;">
+          <strong>网盘主导型（优化后）：</strong>微信（搜索5.12% / 网盘94.88%）、哔哩哔哩 <strong style="color:#e74c3c;">网盘占83.2%</strong>、微博网盘占50.1% —— UP主/博主把夸克网盘作为"视频+资料"的分发工具；
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <strong>搜索主导型：</strong>知乎 <strong style="color:#27ae60;">搜索占76.0%</strong>、小红书搜索占57.2% —— 用户把夸克定位为"AI内容工具"。
+        </div>
+        <div style="padding:10px 14px; background:#fff; border-left:3px solid #4a90e2; border-radius:4px; margin-top:10px; font-size:13px;">
+          <strong>📌 用户具体在说什么：</strong>
+          <ul style="margin:6px 0 0 20px; color:#555;">
+            <li><strong>B站UP主典型话术</strong>：<em>"我用夸克网盘给你分享了「XXX」，点击链接或复制整段内容，打开「夸克APP」即可获取。链接：https://pan.quark.cn/s/xxx"</em>（单帖互动高达 129,970）</li>
+            <li><strong>知乎用户典型讨论</strong>：<em>"各家公司的AI大模型都开始自带浏览器了，夸克网盘崛起也是非常迅猛，价格比百度要便宜..."</em>（互动11 · 竞品对比）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <!-- ========== 洞察 2 ========== -->
+    <div class="insight-card highlight-green">
+      <div class="insight-title">🌸 洞察 2：小红书正向率14.7%居首，用户在说3大主题——AI深度搜索、免费小说、生活场景种草</div>
+      <div class="insight-content">
+        <div style="margin-bottom:10px;">
+          小红书正向内容是微信(0.3%)的<strong>50倍</strong>，但细分二级话题后发现用户讨论焦点非常具体：
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px; margin:12px 0;">
+          <div style="padding:10px 14px; background:#fff; border-radius:6px; border-left:3px solid #27ae60;">
+            <strong>1. AI深度搜索（54%）🥇</strong><br>
+            <span style="font-size:13px; color:#555;">关键话题：#夸克深度搜索 #涨知识上夸克 #AI秒懂你</span>
+          </div>
+          <div style="padding:10px 14px; background:#fff; border-radius:6px; border-left:3px solid #27ae60;">
+            <strong>2. 小说与漫画（64%）📚</strong><br>
+            <span style="font-size:13px; color:#555;">讨论点：免费正版、无广告、AI听书、书城功能</span>
+          </div>
+          <div style="padding:10px 14px; background:#fff; border-radius:6px; border-left:3px solid #27ae60;">
+            <strong>3. 高考志愿/学习（6%）🎓</strong><br>
+            <span style="font-size:13px; color:#555;">夸克高考深度搜索、冲稳保方案、免费工具</span>
+          </div>
+        </div>
+        <div style="padding:10px 14px; background:#fff; border-left:3px solid #27ae60; border-radius:4px; margin-top:10px; font-size:13px;">
+          <strong>📌 用户具体在说什么：</strong>
+          <ul style="margin:6px 0 0 20px; color:#555;">
+            <li><strong>免费小说场景</strong>（互动4,320）：<em>"书城里不仅有各种正版免费小说可以看，而且阅读界面全程无广，更是有听书模式解放双手，还有几十种音色可选，文字秒变有声书的快乐谁懂！"</em></li>
+            <li><strong>高考AI工具</strong>（互动1,713）：<em>"夸克高考做了7年了，数据最全。输入分数+选科，5分钟出一份'冲稳保'方案。免费。有'深度搜索'功能..."</em>（张雪峰去世后替代方案对比）</li>
+            <li><strong>百度网盘迁移教程</strong>（互动2,823·VOC-A）：<em>"如何把百度网盘的内容转存到夸克网盘？超简单！一、最稳妥：本地下载再上传..."</em></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <!-- ========== 洞察 3 ========== -->
+    <div class="insight-card highlight-red">
+      <div class="insight-title">⚠️ 洞察 3：黑猫投诉100%负向 — 自动续费 + OCR扣费 是夸克最大合规风险点</div>
+      <div class="insight-content">
+        <div style="margin-bottom:10px;">
+          黑猫投诉平台所有 <strong style="color:#e74c3c;">2,347条均为负向</strong>。二级话题拆解后暴露两大集中问题：
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px; margin:12px 0;">
+          <div style="padding:10px 14px; background:#fff; border-radius:6px; border-left:3px solid #e74c3c;">
+            <strong>🔴 网盘会员自动续费 42.6%</strong><br>
+            <span style="font-size:13px; color:#555;">涉诉金额：19.9元 ~ 240元<br>高频诉求：退款、停止续费、道歉</span>
+          </div>
+          <div style="padding:10px 14px; background:#fff; border-radius:6px; border-left:3px solid #e74c3c;">
+            <strong>🔴 扫描王OCR扣费 91.3%</strong><br>
+            <span style="font-size:13px; color:#555;">涉诉金额：98元/半年<br>关键词：低价试用诱导、未提醒扣费</span>
+          </div>
+        </div>
+        <div style="padding:10px 14px; background:#fff; border-left:3px solid #e74c3c; border-radius:4px; margin-top:10px; font-size:13px;">
+          <strong>📌 用户具体在说什么（投诉模板高度统一）：</strong>
+          <ul style="margin:6px 0 0 20px; color:#555;">
+            <li><strong>网盘会员退款</strong>（涉诉240元）：<em>"2025年3月19号使用支付宝开通夸克网盘会员，使用了几天后续没用，今年3月14日注意到支付宝扣费，再次登录夸克发现没有会员..."</em></li>
+            <li><strong>扫描王自动扣款</strong>（涉诉98元）：<em>"被夸克扫描王自动续费扣款98元。根据《网络交易监督管理办法》第十八条，自动续费前5日必须以显著方式提醒。本人从未收到任何短信、APP弹窗等有效提醒..."</em></li>
+            <li><strong>低价试用陷阱</strong>：<em>"被平台诱导开通低价试用服务，开通时未显著提示'试用到期后将自动续费半年会员'的条款..."</em></li>
+          </ul>
+        </div>
+        <div style="margin-top:10px; padding:10px; background:#fdf4f3; border-radius:6px; font-size:12px; color:#c0392b;">
+          ⚖️ <strong>合规风险提示</strong>：用户普遍援引《网络交易监督管理办法》第十八条维权，投诉已形成"投诉编号+涉诉金额+法条依据+诉求"的标准化模板，传播门槛极低。
+        </div>
+      </div>
+    </div>
+    
+    <!-- ========== 洞察 4 ========== -->
+    <div class="insight-card highlight-orange">
+      <div class="insight-title">🧠 洞察 4：知乎是"理性评测"阵地 — 搜索子维度均衡分布，折射专业用户多维审视</div>
+      <div class="insight-content">
+        <div style="margin-bottom:10px;">
+          知乎搜索话题占比76.0%（全平台最高），但二级细分后发现 <strong>没有单一压倒性话题</strong>，而是多维度并列：
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:8px; margin:12px 0;">
+          <div style="padding:8px 12px; background:#fff; border-radius:6px; border-left:3px solid #f39c12; font-size:13px;">
+            <strong>无广告体验</strong> 9.2%
+          </div>
+          <div style="padding:8px 12px; background:#fff; border-radius:6px; border-left:3px solid #f39c12; font-size:13px;">
+            <strong>搜索准确性</strong> 9.1%
+          </div>
+          <div style="padding:8px 12px; background:#fff; border-radius:6px; border-left:3px solid #f39c12; font-size:13px;">
+            <strong>搜题/学习</strong> 6.8%
+          </div>
+          <div style="padding:8px 12px; background:#fff; border-radius:6px; border-left:3px solid #f39c12; font-size:13px;">
+            <strong>深度搜索/AI</strong> 6.5%
+          </div>
+          <div style="padding:8px 12px; background:#fff; border-radius:6px; border-left:3px solid #f39c12; font-size:13px;">
+            <strong>竞品对比-百度</strong> 1.7%
+          </div>
+        </div>
+        <div style="padding:10px 14px; background:#fff; border-left:3px solid #f39c12; border-radius:4px; margin-top:10px; font-size:13px;">
+          <strong>📌 用户具体在说什么：</strong>
+          <ul style="margin:6px 0 0 20px; color:#555;">
+            <li><strong>百度广告吐槽</strong>（互动187）：<em>"你在百度搜索里输入'海姆立克急救法'，结果它马上会跳出一个'儿童海姆立克急救法PPT课件'的置顶...百度这种紧急救命的时候也会出来干扰你的判断"</em></li>
+            <li><strong>搜图能力评测</strong>（互动461·VOC-B）：<em>"我使用夸克搜图，得出来的结果是：目前为止，这张图最早的发布时间是2026年2月5日...我甚至动用了一下魔法，去谷歌智能搜图上查找..."</em></li>
+            <li><strong>盗版资源整治分析</strong>（互动153·深度内容）：<em>"大概4月10日开始，多个海外剧搬运博主陆续发布公告，称夸克网盘开始大规模严查整治..."</em>（侧面反映夸克网盘在灰产中的地位）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <!-- ========== 洞察 5 ========== -->
+    <div class="insight-card">
+      <div class="insight-title">🎬 洞察 5：微博 = 饭圈资源交换中心，同人/明星内容占内容消费68.1%</div>
+      <div class="insight-content">
+        <div style="margin-bottom:10px;">
+          微博在"内容消费"子维度下"<strong>同人/饭圈资源</strong>"占比高达 <strong>68.1%</strong>，远超视频/影视(15.1%)、小说(0.6%)。这是其他平台未出现的独特生态。
+        </div>
+        <div style="padding:10px 14px; background:#fff; border-left:3px solid #4a90e2; border-radius:4px; margin-top:10px; font-size:13px;">
+          <strong>📌 用户具体在说什么：</strong>
+          <ul style="margin:6px 0 0 20px; color:#555;">
+            <li><strong>明星代言 + 网盘分享</strong>（互动65）：<em>"#王俊凯代言夸克APP# ... 挥笔提云抹下的墨，狼毫坚韧..."</em>（粉丝应援文 + 夸克网盘资源整合）</li>
+            <li><strong>关键发现</strong>：微博内容消费话题下超过2/3都是饭圈/同人内容，说明夸克品牌代言人策略（王俊凯等）在微博产生显著粉丝经济效应，粉丝主动用夸克网盘传播偶像资源。</li>
+          </ul>
+        </div>
+        <div style="margin-top:10px; padding:10px; background:#eaf3fb; border-radius:6px; font-size:12px; color:#2c3e50;">
+          💡 <strong>营销启示</strong>：微博是夸克"明星代言 → 粉丝传播 → 网盘分享 → 拉新"链路的天然闭环平台，品牌与营销话题占比18.7%（全平台最高）也佐证了这一点。
+        </div>
+      </div>
+    </div>
+    
+    <!-- ========== 洞察 6 ========== -->
+    <div class="insight-card">
+      <div class="insight-title">📝 洞察 6：微信是K12学习场景首要入口 — 搜索引擎中"搜题/学习搜索"独占35.4%</div>
+      <div class="insight-content">
+        <div style="margin-bottom:10px;">
+          微信搜索话题下二级分布显示："<strong>搜题/学习搜索</strong>"占比 <strong>35.4%</strong>，是第二名"搜索准确性"(10.7%)的3倍以上。教育类公众号大规模通过"试卷+夸克网盘链接"的组合进行获客。
+        </div>
+        <div style="padding:10px 14px; background:#fff; border-left:3px solid #4a90e2; border-radius:4px; margin-top:10px; font-size:13px;">
+          <strong>📌 用户具体在说什么（全部是教育公众号推文）：</strong>
+          <ul style="margin:6px 0 0 20px; color:#555;">
+            <li><strong>高考试卷分享</strong>（互动1,228）：<em>"分享包括武汉市2026届高三年级五月供题、南京教研室命制的2026预测数学样卷与参考答案在内的2026年高三全国各地名校联盟模考100多份数学试卷与解析...夸克网盘链接：https://pan.quark.cn/s/7b3de2c"</em></li>
+            <li><strong>高考样卷解析</strong>（互动1,153）：<em>"南京教研室的这份2026高考样卷，整体确实接近真题！第8题，核心在于结构消元最终转化成二次函数的闭区间最值..."</em></li>
+          </ul>
+        </div>
+        <div style="margin-top:10px; padding:10px; background:#eaf3fb; border-radius:6px; font-size:12px; color:#2c3e50;">
+          💡 <strong>业务启示</strong>：教育公众号生态已深度绑定夸克网盘作为资料分发工具，这是夸克在微信域最强的流量来源。建议持续扶持教育类创作者，并在高考/中考季加强合作。
+        </div>
+      </div>
+    </div>
+    
+  </section>
+
+  <!-- ===== 平台对比图表 ===== -->
+  <section class="section fade-in" id="platforms">
+    <h2>🏢 平台话题与情感分布对比</h2>
+    <p>下图展示了10个主要平台的话题构成和情感倾向差异，可直观看出不同平台的用户关注点：</p>
+    
+    <div style="padding:12px 16px; background:#eaf3fb; border-left:3px solid #4a90e2; border-radius:4px; margin:12px 0; font-size:13px; color:#2c3e50;">
+      <strong>📖 数据说明：</strong>
+      话题占比基于<strong>已命中分类体系</strong>的内容重新归一计算。
+      "<strong>未匹配率</strong>"反映该平台内容与当前分类体系（基于微博种子句构建）的适配度 —
+      <strong>未匹配率越高，说明该平台的内容特色越独特</strong>，需要扩展平台专属种子句以提升覆盖率。
+    </div>
+    
+
+    
+    <h3>📊 平台综合对比表</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>平台</th>
+          <th>数据量</th>
+          <th>主导话题</th>
+          <th>占比</th>
+          <th>未匹配率</th>
+          <th style="width:180px;">情感分布（正/中/负）</th>
+        </tr>
+      </thead>
+      <tbody id="overview-table-body"></tbody>
+    </table>
+  </section>
+
+  <!-- ===== 平台详情（可展开） ===== -->
+  <section class="section fade-in">
+    <h2>🔍 各平台深度剖析（点击展开）</h2>
+    <p>每个平台都包含话题分布、情感倾向、功能关注点，并用<strong style="color:#4a90e2;">真实原贴内容</strong>佐证洞察结论。</p>
+    
+    <div class="accordion" id="platform-accordion"></div>
+  </section>
+
+  <!-- ===== 传播原因 ===== -->
+  <section class="section fade-in" id="reasons">
+    <h2>🔥 话题为何广泛传播？</h2>
+    <p>基于10个平台海量UGC内容分析，夸克相关话题的传播机制主要有以下4类：</p>
+    
+    <div class="reason-grid">
+      <div class="reason-card">
+        <div class="icon">📦</div>
+        <h4>网盘资源分享的病毒式传播</h4>
+        <p>用户在微信公众号、B站、贴吧大量分享"夸克网盘链接 + 提取码"，
+        通过<strong>学习资料、软件、影视资源</strong>等刚需内容，
+        实现自发传播。B站网盘话题占比高达83.2%即是证明。</p>
+      </div>
+      <div class="reason-card">
+        <div class="icon">🎁</div>
+        <h4>免费+扩容激励机制</h4>
+        <p>"新用户点击链接可获1024G容量"是最常见的话术，
+        用户为了获取容量<strong>主动转发链接</strong>，
+        形成"内容创作者-下载用户"双方受益的增长飞轮。</p>
+      </div>
+      <div class="reason-card">
+        <div class="icon">🔍</div>
+        <h4>AI搜索差异化心智占领</h4>
+        <p>知乎和微博用户频繁讨论<strong>夸克AI搜图、深度搜索、无广告体验</strong>，
+        以"对比百度/谷歌"的方式形成技术口碑，
+        尤其在专业内容创作者群体中形成高价值种草。</p>
+      </div>
+      <div class="reason-card">
+        <div class="icon">💬</div>
+        <h4>负面吐槽的情绪共鸣</h4>
+        <p>黑猫投诉和酷安中<strong>"自动续费"、"客服不处理"</strong>等问题
+        形成用户共鸣，投诉内容格式化（"投诉编号+金额+诉求"）也便于快速扩散，
+        需要优先应对。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 情感深度分析 ===== -->
+  <section class="section fade-in" id="sentiment">
+    <h2>❤️ 用户情感深度剖析</h2>
+    
+    <div class="chart-grid">
+      <div class="chart-box">
+        <div class="chart-title">10平台情感对比雷达图</div>
+        <div id="chart-sentiment-radar" class="chart"></div>
+      </div>
+      <div class="chart-box">
+        <div class="chart-title">正向情感 TOP 5 平台</div>
+        <div id="chart-positive-top" class="chart"></div>
+      </div>
+    </div>
+
+    <h3>🟢 正向情感驱动因素（基于高互动正向原贴提炼）</h3>
+    <div class="insight-card highlight-green">
+      <strong>驱动点 1：资源获取便利 & 免费容量慷慨</strong><br>
+      <span class="insight-content">
+      小红书用户典型发言："书城里不仅有各种正版免费小说可以看 而且阅读界面全程无广 更是有听书模式解放双手"
+      （互动量4,320）
+      </span>
+    </div>
+    <div class="insight-card highlight-green">
+      <strong>驱动点 2：AI搜索精准 & 效率提升</strong><br>
+      <span class="insight-content">
+      知乎用户典型发言："使用夸克搜图，得出来的结果是：目前为止，这张图最早的发布时间是2026年2月5日...我甚至动用了一下魔法，去谷歌智能搜图..."
+      （互动量829 · VOC-A级）
+      </span>
+    </div>
+    <div class="insight-card highlight-green">
+      <strong>驱动点 3：场景化使用价值</strong><br>
+      <span class="insight-content">
+      小红书用户分享"百度网盘转存夸克网盘"教程（互动量2,823·VOC-A级），
+      展示夸克作为生产力工具的实用性。
+      </span>
+    </div>
+
+    <h3>🔴 负向情感核心关注点（基于黑猫投诉提炼）</h3>
+    <div class="insight-card highlight-red">
+      <strong>痛点 1：会员自动续费扣款（占负面投诉最大比例）</strong><br>
+      <span class="insight-content">
+      典型投诉："夸克网盘在2026年3月13日自动扣费了25元。夸克网盘会员费，我完全用不上这个东西...夸克客服说不不予退款" 
+      <br>涉诉金额19.9元-240元不等，多数用户诉求为<strong>退款+停止续费</strong>。
+      </span>
+    </div>
+    <div class="insight-card highlight-red">
+      <strong>痛点 2：客服响应慢 & 问题处理不当</strong><br>
+      <span class="insight-content">
+      "客服不处理,服务不到位,账号问题" · "投诉要求：改善服务,道歉,开发票,作出处罚,解释"
+      <br>用户期待的是<strong>及时响应+明确解决方案</strong>，而非标准化回复。
+      </span>
+    </div>
+    <div class="insight-card highlight-red">
+      <strong>痛点 3：扣费通知不透明</strong><br>
+      <span class="insight-content">
+      典型投诉："违反《网络交易监督管理办法》第十八条规定，在扣费前5日未以任何显著方式（如短信、弹窗）告知"
+      <br>用户依法维权意识较强，是<strong>合规风险高发领域</strong>。
+      </span>
+    </div>
+  </section>
+
+  <!-- ===== 策略建议 ===== -->
+  <section class="section fade-in" id="recommendations">
+    <h2>🎯 基于洞察的策略建议</h2>
+    
+    <div class="reason-grid">
+      <div class="reason-card" style="border-left: 4px solid #27ae60;">
+        <h4>🟢 放大正向声量</h4>
+        <p><strong>小红书 + 抖音</strong>：加大KOC场景化种草投入，主打"学习党/职场人/宝妈"使用场景。<br>
+        <strong>知乎</strong>：邀请技术博主做"AI搜索对比评测"，强化差异化心智。</p>
+      </div>
+      <div class="reason-card" style="border-left: 4px solid #e74c3c;">
+        <h4>🔴 紧急治理负面</h4>
+        <p><strong>黑猫投诉</strong>：建立24小时内响应机制，制定统一退款SOP。<br>
+        <strong>自动续费</strong>：严格遵守扣费前5日显著告知义务，降低合规风险。</p>
+      </div>
+      <div class="reason-card" style="border-left: 4px solid #4a90e2;">
+        <h4>🔵 差异化平台运营</h4>
+        <p><strong>微信/B站/贴吧</strong>：持续激活网盘分享生态，推进内容创作者激励计划。<br>
+        <strong>抖音/快手</strong>：补充短视频平台专用种子句（当前分类率仅72.5%和67.5%）。</p>
+      </div>
+      <div class="reason-card" style="border-left: 4px solid #f39c12;">
+        <h4>🟡 话题体系扩展</h4>
+        <p>当前<strong>AI能力</strong>话题占比仅0.1%，但在黑猫投诉中已达20.1%，
+        说明用户对AI功能期待高但实际体验有差距，需重点优化AI体验并强化正向宣传。</p>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- ===== 附录 ===== -->
+  <section class="section fade-in" id="appendix">
+    <h2>📎 附录：分类体系说明</h2>
+    <p style="color:#7f8c8d; font-size:14px; margin-bottom:20px;">
+      本节提供分类体系的详细定义、边界说明与判别方法，供方法论参考与新增平台数据分类对照使用。
+    </p>
+    
+    <h3 style="font-size:18px; margin-top:0;">A.1 分类边界说明：搜索引擎 vs 浏览器主功能</h3>
+    <p style="color:#7f8c8d; font-size:14px; margin-bottom:16px;">夸克同时是"搜索引擎"和"浏览器"，两个一级话题容易混淆。本报告严格按"用户讨论焦点"区分：</p>
+    
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin:16px 0;">
+      
+      <!-- 搜索引擎 -->
+      <div style="background:linear-gradient(135deg, #f0f7ff 0%, #fff 100%); border:2px solid #4a90e2; border-radius:10px; padding:20px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+          <span style="font-size:24px;">🔍</span>
+          <div>
+            <h3 style="margin:0; color:#4a90e2;">搜索引擎</h3>
+            <div style="font-size:12px; color:#7f8c8d;">讨论的是"搜出来的结果"</div>
+          </div>
+        </div>
+        <div style="font-size:13px; color:#555; line-height:1.8;">
+          <strong>🎯 核心边界：</strong>用户关注的是"<strong>搜索这个动作/结果</strong>"本身
+          <div style="margin:10px 0; padding:8px 12px; background:#fff; border-radius:6px;">
+            <strong>子维度示例：</strong>
+            <ul style="margin:4px 0 0 18px; font-size:12.5px;">
+              <li>搜索准确性（搜得准不准）</li>
+              <li>搜题/学习搜索（搜作业、搜高考题）</li>
+              <li>深度搜索/AI搜索（AI回答能力）</li>
+              <li>搜图/以图搜图（溯源能力）</li>
+              <li>无广告体验（对比百度置顶广告）</li>
+              <li>竞品对比（vs 百度/Bing/谷歌）</li>
+            </ul>
+          </div>
+          <div style="padding:8px 12px; background:#eaf3fb; border-radius:6px; font-size:12px;">
+            <strong>✅ 典型原贴：</strong><br>
+            <em>"使用夸克搜图，得出来的结果是：目前为止，这张图最早的发布时间是2026年2月5日..."</em><br>
+            <em>"你在百度搜索里输入'海姆立克急救法'，结果马上跳出一个PPT课件的置顶广告..."</em>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 浏览器主功能 -->
+      <div style="background:linear-gradient(135deg, #fdf4f3 0%, #fff 100%); border:2px solid #e67e22; border-radius:10px; padding:20px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+          <span style="font-size:24px;">🌐</span>
+          <div>
+            <h3 style="margin:0; color:#e67e22;">浏览器主功能</h3>
+            <div style="font-size:12px; color:#7f8c8d;">讨论的是"浏览器这个壳"</div>
+          </div>
+        </div>
+        <div style="font-size:13px; color:#555; line-height:1.8;">
+          <strong>🎯 核心边界：</strong>用户关注的是"<strong>浏览器App作为容器</strong>"本身
+          <div style="margin:10px 0; padding:8px 12px; background:#fff; border-radius:6px;">
+            <strong>子维度示例：</strong>
+            <ul style="margin:4px 0 0 18px; font-size:12.5px;">
+              <li>启动/性能（卡顿、闪退、速度）</li>
+              <li>广告与弹窗（App内弹窗推送）</li>
+              <li>会员/自动续费（SVIP扣费）</li>
+              <li>书签/跨端同步</li>
+              <li>插件/扩展（极客向）</li>
+              <li>卸载/差评（整体产品吐槽）</li>
+            </ul>
+          </div>
+          <div style="padding:8px 12px; background:#fef5e7; border-radius:6px; font-size:12px;">
+            <strong>✅ 典型原贴：</strong><br>
+            <em>"夸克会员于2026年4月16日被自动续费扣款19.9元，扣费前5日未以任何显著方式提醒..."</em><br>
+            <em>"诱导充值夸克会员，充值后宣传的视频加速、云收藏等会员功能全部无法正常使用..."</em>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 对比表格 -->
+    <h4 style="color:#34495e;">🔀 快速判别表</h4>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:30%;">用户场景 / 讨论话题</th>
+          <th style="width:20%;">归类</th>
+          <th>判别理由</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>"夸克搜题又准又快"</td>
+          <td><span class="tag" style="background:#cfe2ff; color:#052c65;">🔍 搜索引擎</span></td>
+          <td>焦点是"搜索结果质量"</td>
+        </tr>
+        <tr>
+          <td>"夸克浏览器启动好快"</td>
+          <td><span class="tag" style="background:#ffe5d4; color:#6b2c00;">🌐 浏览器主功能</span></td>
+          <td>焦点是"App性能"</td>
+        </tr>
+        <tr>
+          <td>"夸克搜索没广告，比百度清爽"</td>
+          <td><span class="tag" style="background:#cfe2ff; color:#052c65;">🔍 搜索引擎</span></td>
+          <td>焦点是"搜索结果页无广告"（对比百度SERP）</td>
+        </tr>
+        <tr>
+          <td>"夸克App弹窗推送太烦"</td>
+          <td><span class="tag" style="background:#ffe5d4; color:#6b2c00;">🌐 浏览器主功能</span></td>
+          <td>焦点是"App内广告弹窗"（非搜索结果）</td>
+        </tr>
+        <tr>
+          <td>"夸克AI搜图能溯源图片出处"</td>
+          <td><span class="tag" style="background:#cfe2ff; color:#052c65;">🔍 搜索引擎</span></td>
+          <td>搜图能力 = 搜索能力延伸</td>
+        </tr>
+        <tr>
+          <td>"夸克SVIP自动续费没提醒"</td>
+          <td><span class="tag" style="background:#ffe5d4; color:#6b2c00;">🌐 浏览器主功能</span></td>
+          <td>会员体系属于App产品而非搜索功能</td>
+        </tr>
+        <tr>
+          <td>"夸克浏览器iPhone千万别删"</td>
+          <td><span class="tag" style="background:#ffe5d4; color:#6b2c00;">🌐 浏览器主功能</span></td>
+          <td>讨论的是App作为"必装工具"的整体价值</td>
+        </tr>
+        <tr>
+          <td>"夸克搜索比Bing搜得更多"</td>
+          <td><span class="tag" style="background:#cfe2ff; color:#052c65;">🔍 搜索引擎</span></td>
+          <td>搜索引擎竞品对比</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- 数据层面的差异 -->
+    <h4 style="color:#34495e;">📊 两者在真实数据中的表现差异</h4>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:12px 0;">
+      <div style="padding:16px; background:#f8f9fb; border-radius:8px; border-top:3px solid #4a90e2;">
+        <h4 style="margin:0 0 8px; color:#2c3e50;">🔍 搜索引擎话题</h4>
+        <div style="font-size:13px; color:#555;">
+          <strong>声量占比高的平台：</strong>知乎(76.0%)、小红书(57.2%)、微信(51.2%)<br>
+          <strong>主导情感：</strong>中性/正向为主（讨论搜索体验）<br>
+          <strong>内容形态：</strong>对比评测、使用技巧、搜题分享
+        </div>
+      </div>
+      <div style="padding:16px; background:#f8f9fb; border-radius:8px; border-top:3px solid #e67e22;">
+        <h4 style="margin:0 0 8px; color:#2c3e50;">🌐 浏览器主功能话题</h4>
+        <div style="font-size:13px; color:#555;">
+          <strong>声量占比高的平台：</strong>黑猫投诉(22.2%)、酷安(5.1%)<br>
+          <strong>主导情感：</strong><strong style="color:#e74c3c;">负向为主（投诉App体验）</strong><br>
+          <strong>内容形态：</strong>投诉维权、App性能吐槽、会员退款
+        </div>
+      </div>
+    </div>
+    
+    <div style="padding:12px 16px; background:#eaf3fb; border-left:3px solid #4a90e2; border-radius:4px; margin-top:16px; font-size:13px; color:#2c3e50;">
+      <strong>💡 业务洞察：</strong>
+      "搜索引擎"话题 = <strong style="color:#27ae60;">夸克产品核心价值口碑</strong>（用户在讨论产品有多好用）；
+      "浏览器主功能"话题 = <strong style="color:#e74c3c;">夸克产品整体体验风险</strong>（用户在投诉App本身的问题）。
+      两者需<strong>不同的运营策略</strong>：前者扩大正向声量，后者优化产品体验与合规。
+    </div>
+
+    <h3 style="font-size:18px; margin-top:30px;">A.2 8大一级分类体系概览</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:14%;">一级话题</th>
+          <th style="width:30%;">定义描述</th>
+          <th>典型二级维度</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>🔍 搜索引擎</strong></td>
+          <td>搜索功能体验、结果质量、与百度/Bing/谷歌对比</td>
+          <td>搜索准确性 · 搜题/学习搜索 · 深度搜索/AI搜索 · 搜图 · 无广告体验 · 竞品对比</td>
+        </tr>
+        <tr>
+          <td><strong>📦 网盘</strong></td>
+          <td>网盘上传/下载/限速/容量/分享等</td>
+          <td>资源分享/转存 · 限速下载 · 容量扩容 · 网盘会员VIP · 资源失效 · 与百度网盘对比</td>
+        </tr>
+        <tr>
+          <td><strong>🤖 AI能力</strong></td>
+          <td>AI问答、AI写作、AI翻译、扫描识图、文档总结等（不含眼镜硬件）</td>
+          <td>AI问答 · AI写作 · AI做PPT · AI解题 · AI翻译 · 扫描识图/OCR</td>
+        </tr>
+        <tr>
+          <td><strong>👓 AI眼镜G1</strong></td>
+          <td>夸克 AI 眼镜 G1 硬件相关讨论</td>
+          <td>产品种草 · 使用体验 · 场景应用 · 渠道价格 · 对比竞品</td>
+        </tr>
+        <tr>
+          <td><strong>🌐 浏览器主功能</strong></td>
+          <td>启动速度、广告拦截、卡顿崩溃、书签同步、插件等</td>
+          <td>启动/性能 · 广告弹窗 · 会员/自动续费 · 书签同步 · 插件扩展 · 卸载差评</td>
+        </tr>
+        <tr>
+          <td><strong>📖 内容消费</strong></td>
+          <td>通过夸克消费小说/漫画/视频/同人/资源等</td>
+          <td>小说与漫画 · 视频/影视 · 同人/饭圈资源 · 听书/音频 · 教育内容</td>
+        </tr>
+        <tr>
+          <td><strong>🔒 隐私与合规</strong></td>
+          <td>隐私泄露、推送骚扰、青少年保护、违规内容等</td>
+          <td>隐私泄露 · 推送骚扰 · 青少年保护 · 违规内容</td>
+        </tr>
+        <tr>
+          <td><strong>💎 品牌与营销</strong></td>
+          <td>品牌联名、KOL推广、明星合作、抽奖活动等（以营销内容形态出现）</td>
+          <td>明星/饭圈联动 · KOL/达人种草 · 会员抽奖 · 联名合作</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:18px; margin-top:30px;">A.3 配套维度说明</h3>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin:12px 0;">
+      <div style="padding:14px; background:#f8f9fb; border-radius:8px;">
+        <strong style="color:#2c3e50;">情感标签</strong>
+        <div style="font-size:13px; color:#555; margin-top:6px;">正向 / 中性 / 负向</div>
+      </div>
+      <div style="padding:14px; background:#f8f9fb; border-radius:8px;">
+        <strong style="color:#2c3e50;">VOC质量等级</strong>
+        <div style="font-size:13px; color:#555; margin-top:6px;">
+          A级：明确的产品反馈/可执行洞察<br>
+          B级：有产品提及但反馈较模糊<br>
+          C级：营销/无关/纯传播，无产品价值
+        </div>
+      </div>
+      <div style="padding:14px; background:#f8f9fb; border-radius:8px;">
+        <strong style="color:#2c3e50;">表达类型</strong>
+        <div style="font-size:13px; color:#555; margin-top:6px;">使用体验 · 场景展示 · 吐槽报错 · 竞品对比 · 教程分享</div>
+      </div>
+      <div style="padding:14px; background:#f8f9fb; border-radius:8px;">
+        <strong style="color:#2c3e50;">内容类型</strong>
+        <div style="font-size:13px; color:#555; margin-top:6px;">营销 · 应用场景展示 · 产品直接评价 · 新闻 · 无关噪音</div>
+      </div>
+    </div>
+
+  </section>
+
+</div>
+
+<div class="footer">
+  📊 报告基于夸克多平台舆情数据生成 · 2026年5月 · 数据已脱敏处理
+</div>
+
+<script>
+const DATA = {"微信": {"platform": "微信", "total_records": 194499, "topic_distribution": [{"topic": "网盘", "count": 189563, "percentage": 97.46}, {"topic": "搜索引擎", "count": 4553, "percentage": 2.34}, {"topic": "AI能力", "count": 263, "percentage": 0.14}, {"topic": "浏览器主功能", "count": 64, "percentage": 0.03}, {"topic": "内容消费", "count": 9, "percentage": 0.0}, {"topic": "品牌与营销", "count": 4, "percentage": 0.0}, {"topic": "隐私与合规", "count": 3, "percentage": 0.0}], "sentiment_distribution": [{"sentiment": "0", "count": 192967, "percentage": 99.21}, {"sentiment": "1", "count": 1098, "percentage": 0.56}, {"sentiment": "-1", "count": 434, "percentage": 0.22}], "subtopic_detail": {"网盘": {"total": 189563, "subtopics": [{"name": "资源分享", "count": 96630, "percentage": 50.98, "sample_posts": []}, {"name": "转存与提取码", "count": 51098, "percentage": 26.96, "sample_posts": []}, {"name": "学习资料", "count": 29211, "percentage": 15.41, "sample_posts": []}, {"name": "限速与容量", "count": 4227, "percentage": 2.23, "sample_posts": []}, {"name": "软件与工具", "count": 2758, "percentage": 1.45, "sample_posts": []}, {"name": "网盘对比", "count": 2328, "percentage": 1.23, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "搜索引擎": {"total": 4553, "subtopics": [{"name": "品牌/一般提及", "count": 1985, "percentage": 43.6, "sample_posts": []}, {"name": "搜题/学习搜索", "count": 1531, "percentage": 33.63, "sample_posts": []}, {"name": "竞品对比", "count": 326, "percentage": 7.16, "sample_posts": []}, {"name": "AI搜索/深度搜索", "count": 322, "percentage": 7.07, "sample_posts": []}, {"name": "搜索准确性", "count": 194, "percentage": 4.26, "sample_posts": []}, {"name": "无广告体验", "count": 137, "percentage": 3.01, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI能力": {"total": 263, "subtopics": [{"name": "AI综合体验", "count": 126, "percentage": 47.91, "sample_posts": []}, {"name": "AI问答", "count": 48, "percentage": 18.25, "sample_posts": []}, {"name": "AI解题/学习", "count": 31, "percentage": 11.79, "sample_posts": []}, {"name": "AI翻译", "count": 31, "percentage": 11.79, "sample_posts": []}, {"name": "扫描识图/OCR", "count": 21, "percentage": 7.98, "sample_posts": []}, {"name": "AI写作/PPT", "count": 6, "percentage": 2.28, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "浏览器主功能": {"total": 64, "subtopics": [{"name": "浏览器综合", "count": 37, "percentage": 57.81, "sample_posts": []}, {"name": "广告/弹窗", "count": 9, "percentage": 14.06, "sample_posts": []}, {"name": "启动/性能", "count": 7, "percentage": 10.94, "sample_posts": []}, {"name": "书签/同步", "count": 7, "percentage": 10.94, "sample_posts": []}, {"name": "会员/自动续费", "count": 4, "percentage": 6.25, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "内容消费": {"total": 9, "subtopics": [{"name": "小说与漫画", "count": 4, "percentage": 44.44, "sample_posts": []}, {"name": "视频/影视", "count": 3, "percentage": 33.33, "sample_posts": []}, {"name": "教育内容", "count": 2, "percentage": 22.22, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "品牌与营销": {"total": 4, "subtopics": [{"name": "品牌提及", "count": 2, "percentage": 50.0, "sample_posts": []}, {"name": "KOL/达人种草", "count": 1, "percentage": 25.0, "sample_posts": []}, {"name": "会员/抽奖活动", "count": 1, "percentage": 25.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "隐私与合规": {"total": 3, "subtopics": [{"name": "违规内容", "count": 2, "percentage": 66.67, "sample_posts": []}, {"name": "隐私泄露", "count": 1, "percentage": 33.33, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}}, "unclassified_count": 40, "unclassified_rate": 0.02}, "哔哩哔哩": {"platform": "哔哩哔哩", "total_records": 7845, "topic_distribution": [{"topic": "网盘", "count": 7715, "percentage": 98.34}, {"topic": "搜索引擎", "count": 97, "percentage": 1.24}, {"topic": "AI能力", "count": 9, "percentage": 0.11}, {"topic": "浏览器主功能", "count": 5, "percentage": 0.06}, {"topic": "内容消费", "count": 2, "percentage": 0.03}], "sentiment_distribution": [{"sentiment": "0", "count": 7826, "percentage": 99.76}, {"sentiment": "1", "count": 12, "percentage": 0.15}, {"sentiment": "-1", "count": 7, "percentage": 0.09}], "subtopic_detail": {"网盘": {"total": 7715, "subtopics": [{"name": "资源分享", "count": 5629, "percentage": 72.96, "sample_posts": []}, {"name": "转存与提取码", "count": 1386, "percentage": 17.97, "sample_posts": []}, {"name": "学习资料", "count": 281, "percentage": 3.64, "sample_posts": []}, {"name": "软件与工具", "count": 208, "percentage": 2.7, "sample_posts": []}, {"name": "影视资源", "count": 109, "percentage": 1.41, "sample_posts": []}, {"name": "小说资源", "count": 90, "percentage": 1.17, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "搜索引擎": {"total": 97, "subtopics": [{"name": "品牌/一般提及", "count": 86, "percentage": 88.66, "sample_posts": []}, {"name": "AI搜索/深度搜索", "count": 7, "percentage": 7.22, "sample_posts": []}, {"name": "搜题/学习搜索", "count": 3, "percentage": 3.09, "sample_posts": []}, {"name": "无广告体验", "count": 1, "percentage": 1.03, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI能力": {"total": 9, "subtopics": [{"name": "AI综合体验", "count": 5, "percentage": 55.56, "sample_posts": []}, {"name": "扫描识图/OCR", "count": 2, "percentage": 22.22, "sample_posts": []}, {"name": "AI翻译", "count": 1, "percentage": 11.11, "sample_posts": []}, {"name": "AI解题/学习", "count": 1, "percentage": 11.11, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "浏览器主功能": {"total": 5, "subtopics": [{"name": "浏览器综合", "count": 5, "percentage": 100.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "内容消费": {"total": 2, "subtopics": [{"name": "视频/影视", "count": 2, "percentage": 100.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}}, "unclassified_count": 17, "unclassified_rate": 0.22}, "小红书": {"platform": "小红书", "total_records": 8585, "topic_distribution": [{"topic": "搜索引擎", "count": 4901, "percentage": 57.09}, {"topic": "网盘", "count": 928, "percentage": 10.81}, {"topic": "AI能力", "count": 803, "percentage": 9.35}, {"topic": "浏览器主功能", "count": 423, "percentage": 4.93}, {"topic": "内容消费", "count": 244, "percentage": 2.84}, {"topic": "品牌与营销", "count": 18, "percentage": 0.21}, {"topic": "AI眼镜G1", "count": 11, "percentage": 0.13}, {"topic": "隐私与合规", "count": 7, "percentage": 0.08}], "sentiment_distribution": [{"sentiment": "0", "count": 6518, "percentage": 75.92}, {"sentiment": "1", "count": 1259, "percentage": 14.67}, {"sentiment": "-1", "count": 808, "percentage": 9.41}], "subtopic_detail": {"搜索引擎": {"total": 4901, "subtopics": [{"name": "AI搜索/深度搜索", "count": 3051, "percentage": 62.25, "sample_posts": []}, {"name": "品牌/一般提及", "count": 1139, "percentage": 23.24, "sample_posts": []}, {"name": "搜题/学习搜索", "count": 605, "percentage": 12.34, "sample_posts": []}, {"name": "搜索准确性", "count": 54, "percentage": 1.1, "sample_posts": []}, {"name": "无广告体验", "count": 26, "percentage": 0.53, "sample_posts": []}, {"name": "竞品对比", "count": 20, "percentage": 0.41, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "网盘": {"total": 928, "subtopics": [{"name": "资源分享", "count": 393, "percentage": 42.35, "sample_posts": []}, {"name": "软件与工具", "count": 203, "percentage": 21.88, "sample_posts": []}, {"name": "学习资料", "count": 155, "percentage": 16.7, "sample_posts": []}, {"name": "影视资源", "count": 63, "percentage": 6.79, "sample_posts": []}, {"name": "限速与容量", "count": 48, "percentage": 5.17, "sample_posts": []}, {"name": "小说资源", "count": 35, "percentage": 3.77, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI能力": {"total": 803, "subtopics": [{"name": "AI综合体验", "count": 406, "percentage": 50.56, "sample_posts": []}, {"name": "扫描识图/OCR", "count": 219, "percentage": 27.27, "sample_posts": []}, {"name": "AI解题/学习", "count": 86, "percentage": 10.71, "sample_posts": []}, {"name": "AI写作/PPT", "count": 66, "percentage": 8.22, "sample_posts": []}, {"name": "AI问答", "count": 16, "percentage": 1.99, "sample_posts": []}, {"name": "AI翻译", "count": 10, "percentage": 1.25, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "浏览器主功能": {"total": 423, "subtopics": [{"name": "广告/弹窗", "count": 200, "percentage": 47.28, "sample_posts": []}, {"name": "浏览器综合", "count": 104, "percentage": 24.59, "sample_posts": []}, {"name": "会员/自动续费", "count": 68, "percentage": 16.08, "sample_posts": []}, {"name": "启动/性能", "count": 44, "percentage": 10.4, "sample_posts": []}, {"name": "卸载/差评", "count": 5, "percentage": 1.18, "sample_posts": []}, {"name": "书签/同步", "count": 2, "percentage": 0.47, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "内容消费": {"total": 244, "subtopics": [{"name": "小说与漫画", "count": 162, "percentage": 66.39, "sample_posts": []}, {"name": "视频/影视", "count": 70, "percentage": 28.69, "sample_posts": []}, {"name": "教育内容", "count": 6, "percentage": 2.46, "sample_posts": []}, {"name": "内容综合", "count": 5, "percentage": 2.05, "sample_posts": []}, {"name": "同人/饭圈资源", "count": 1, "percentage": 0.41, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "品牌与营销": {"total": 18, "subtopics": [{"name": "KOL/达人种草", "count": 8, "percentage": 44.44, "sample_posts": []}, {"name": "品牌提及", "count": 6, "percentage": 33.33, "sample_posts": []}, {"name": "明星/代言", "count": 2, "percentage": 11.11, "sample_posts": []}, {"name": "联名合作", "count": 1, "percentage": 5.56, "sample_posts": []}, {"name": "会员/抽奖活动", "count": 1, "percentage": 5.56, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI眼镜G1": {"total": 11, "subtopics": [{"name": "产品讨论", "count": 8, "percentage": 72.73, "sample_posts": []}, {"name": "价格/购买", "count": 2, "percentage": 18.18, "sample_posts": []}, {"name": "产品种草", "count": 1, "percentage": 9.09, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "隐私与合规": {"total": 7, "subtopics": [{"name": "隐私泄露", "count": 7, "percentage": 100.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}}, "unclassified_count": 1250, "unclassified_rate": 14.56}, "知乎": {"platform": "知乎", "total_records": 2148, "topic_distribution": [{"topic": "搜索引擎", "count": 1390, "percentage": 64.71}, {"topic": "网盘", "count": 591, "percentage": 27.51}, {"topic": "AI能力", "count": 57, "percentage": 2.65}, {"topic": "浏览器主功能", "count": 32, "percentage": 1.49}, {"topic": "内容消费", "count": 12, "percentage": 0.56}, {"topic": "品牌与营销", "count": 2, "percentage": 0.09}], "sentiment_distribution": [{"sentiment": "0", "count": 1973, "percentage": 91.85}, {"sentiment": "-1", "count": 111, "percentage": 5.17}, {"sentiment": "1", "count": 64, "percentage": 2.98}], "subtopic_detail": {"搜索引擎": {"total": 1390, "subtopics": [{"name": "品牌/一般提及", "count": 668, "percentage": 48.06, "sample_posts": []}, {"name": "搜题/学习搜索", "count": 353, "percentage": 25.4, "sample_posts": []}, {"name": "无广告体验", "count": 119, "percentage": 8.56, "sample_posts": []}, {"name": "竞品对比", "count": 105, "percentage": 7.55, "sample_posts": []}, {"name": "搜索准确性", "count": 86, "percentage": 6.19, "sample_posts": []}, {"name": "AI搜索/深度搜索", "count": 39, "percentage": 2.81, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "网盘": {"total": 591, "subtopics": [{"name": "资源分享", "count": 339, "percentage": 57.36, "sample_posts": []}, {"name": "学习资料", "count": 77, "percentage": 13.03, "sample_posts": []}, {"name": "转存与提取码", "count": 69, "percentage": 11.68, "sample_posts": []}, {"name": "软件与工具", "count": 45, "percentage": 7.61, "sample_posts": []}, {"name": "影视资源", "count": 28, "percentage": 4.74, "sample_posts": []}, {"name": "限速与容量", "count": 21, "percentage": 3.55, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI能力": {"total": 57, "subtopics": [{"name": "AI综合体验", "count": 34, "percentage": 59.65, "sample_posts": []}, {"name": "AI问答", "count": 11, "percentage": 19.3, "sample_posts": []}, {"name": "AI解题/学习", "count": 4, "percentage": 7.02, "sample_posts": []}, {"name": "扫描识图/OCR", "count": 3, "percentage": 5.26, "sample_posts": []}, {"name": "AI翻译", "count": 3, "percentage": 5.26, "sample_posts": []}, {"name": "AI写作/PPT", "count": 2, "percentage": 3.51, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "浏览器主功能": {"total": 32, "subtopics": [{"name": "浏览器综合", "count": 13, "percentage": 40.62, "sample_posts": []}, {"name": "广告/弹窗", "count": 9, "percentage": 28.12, "sample_posts": []}, {"name": "会员/自动续费", "count": 5, "percentage": 15.62, "sample_posts": []}, {"name": "启动/性能", "count": 3, "percentage": 9.38, "sample_posts": []}, {"name": "书签/同步", "count": 2, "percentage": 6.25, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "内容消费": {"total": 12, "subtopics": [{"name": "视频/影视", "count": 5, "percentage": 41.67, "sample_posts": []}, {"name": "小说与漫画", "count": 3, "percentage": 25.0, "sample_posts": []}, {"name": "内容综合", "count": 3, "percentage": 25.0, "sample_posts": []}, {"name": "教育内容", "count": 1, "percentage": 8.33, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "品牌与营销": {"total": 2, "subtopics": [{"name": "品牌提及", "count": 2, "percentage": 100.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}}, "unclassified_count": 64, "unclassified_rate": 2.98}, "百度贴吧": {"platform": "百度贴吧", "total_records": 6184, "topic_distribution": [{"topic": "网盘", "count": 4621, "percentage": 74.73}, {"topic": "搜索引擎", "count": 1416, "percentage": 22.9}, {"topic": "浏览器主功能", "count": 45, "percentage": 0.73}, {"topic": "内容消费", "count": 30, "percentage": 0.49}, {"topic": "隐私与合规", "count": 3, "percentage": 0.05}, {"topic": "AI能力", "count": 3, "percentage": 0.05}, {"topic": "品牌与营销", "count": 2, "percentage": 0.03}], "sentiment_distribution": [{"sentiment": "0", "count": 6023, "percentage": 97.4}, {"sentiment": "1", "count": 93, "percentage": 1.5}, {"sentiment": "-1", "count": 68, "percentage": 1.1}], "subtopic_detail": {"网盘": {"total": 4621, "subtopics": [{"name": "资源分享", "count": 3202, "percentage": 69.29, "sample_posts": []}, {"name": "影视资源", "count": 936, "percentage": 20.26, "sample_posts": []}, {"name": "转存与提取码", "count": 161, "percentage": 3.48, "sample_posts": []}, {"name": "小说资源", "count": 122, "percentage": 2.64, "sample_posts": []}, {"name": "软件与工具", "count": 83, "percentage": 1.8, "sample_posts": []}, {"name": "学习资料", "count": 75, "percentage": 1.62, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "搜索引擎": {"total": 1416, "subtopics": [{"name": "品牌/一般提及", "count": 1347, "percentage": 95.13, "sample_posts": []}, {"name": "搜题/学习搜索", "count": 25, "percentage": 1.77, "sample_posts": []}, {"name": "无广告体验", "count": 23, "percentage": 1.62, "sample_posts": []}, {"name": "搜索准确性", "count": 14, "percentage": 0.99, "sample_posts": []}, {"name": "竞品对比", "count": 5, "percentage": 0.35, "sample_posts": []}, {"name": "AI搜索/深度搜索", "count": 2, "percentage": 0.14, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "浏览器主功能": {"total": 45, "subtopics": [{"name": "浏览器综合", "count": 27, "percentage": 60.0, "sample_posts": []}, {"name": "启动/性能", "count": 8, "percentage": 17.78, "sample_posts": []}, {"name": "广告/弹窗", "count": 6, "percentage": 13.33, "sample_posts": []}, {"name": "书签/同步", "count": 2, "percentage": 4.44, "sample_posts": []}, {"name": "会员/自动续费", "count": 2, "percentage": 4.44, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "内容消费": {"total": 30, "subtopics": [{"name": "小说与漫画", "count": 20, "percentage": 66.67, "sample_posts": []}, {"name": "视频/影视", "count": 8, "percentage": 26.67, "sample_posts": []}, {"name": "内容综合", "count": 2, "percentage": 6.67, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "隐私与合规": {"total": 3, "subtopics": [{"name": "隐私泄露", "count": 1, "percentage": 33.33, "sample_posts": []}, {"name": "隐私综合", "count": 1, "percentage": 33.33, "sample_posts": []}, {"name": "推送骚扰", "count": 1, "percentage": 33.33, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI能力": {"total": 3, "subtopics": [{"name": "AI综合体验", "count": 3, "percentage": 100.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "品牌与营销": {"total": 2, "subtopics": [{"name": "会员/抽奖活动", "count": 1, "percentage": 50.0, "sample_posts": []}, {"name": "KOL/达人种草", "count": 1, "percentage": 50.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}}, "unclassified_count": 64, "unclassified_rate": 1.03}, "微博": {"platform": "微博", "total_records": 4885, "topic_distribution": [{"topic": "网盘", "count": 2685, "percentage": 54.96}, {"topic": "品牌与营销", "count": 913, "percentage": 18.69}, {"topic": "搜索引擎", "count": 462, "percentage": 9.46}, {"topic": "内容消费", "count": 166, "percentage": 3.4}, {"topic": "AI眼镜G1", "count": 119, "percentage": 2.44}, {"topic": "AI能力", "count": 64, "percentage": 1.31}, {"topic": "浏览器主功能", "count": 51, "percentage": 1.04}, {"topic": "隐私与合规", "count": 2, "percentage": 0.04}], "sentiment_distribution": [{"sentiment": "0", "count": 4469, "percentage": 91.48}, {"sentiment": "1", "count": 264, "percentage": 5.4}, {"sentiment": "-1", "count": 152, "percentage": 3.11}], "subtopic_detail": {"网盘": {"total": 2685, "subtopics": [{"name": "资源分享", "count": 1500, "percentage": 55.87, "sample_posts": []}, {"name": "影视资源", "count": 669, "percentage": 24.92, "sample_posts": []}, {"name": "学习资料", "count": 200, "percentage": 7.45, "sample_posts": []}, {"name": "转存与提取码", "count": 180, "percentage": 6.7, "sample_posts": []}, {"name": "软件与工具", "count": 63, "percentage": 2.35, "sample_posts": []}, {"name": "小说资源", "count": 47, "percentage": 1.75, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "品牌与营销": {"total": 913, "subtopics": [{"name": "明星/代言", "count": 911, "percentage": 99.78, "sample_posts": []}, {"name": "会员/抽奖活动", "count": 2, "percentage": 0.22, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "搜索引擎": {"total": 462, "subtopics": [{"name": "品牌/一般提及", "count": 288, "percentage": 62.34, "sample_posts": []}, {"name": "搜题/学习搜索", "count": 95, "percentage": 20.56, "sample_posts": []}, {"name": "AI搜索/深度搜索", "count": 27, "percentage": 5.84, "sample_posts": []}, {"name": "竞品对比", "count": 24, "percentage": 5.19, "sample_posts": []}, {"name": "搜索准确性", "count": 17, "percentage": 3.68, "sample_posts": []}, {"name": "无广告体验", "count": 7, "percentage": 1.52, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "内容消费": {"total": 166, "subtopics": [{"name": "视频/影视", "count": 161, "percentage": 96.99, "sample_posts": []}, {"name": "内容综合", "count": 4, "percentage": 2.41, "sample_posts": []}, {"name": "小说与漫画", "count": 1, "percentage": 0.6, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI眼镜G1": {"total": 119, "subtopics": [{"name": "产品讨论", "count": 118, "percentage": 99.16, "sample_posts": []}, {"name": "价格/购买", "count": 1, "percentage": 0.84, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI能力": {"total": 64, "subtopics": [{"name": "AI综合体验", "count": 43, "percentage": 67.19, "sample_posts": []}, {"name": "AI问答", "count": 7, "percentage": 10.94, "sample_posts": []}, {"name": "AI翻译", "count": 6, "percentage": 9.38, "sample_posts": []}, {"name": "扫描识图/OCR", "count": 4, "percentage": 6.25, "sample_posts": []}, {"name": "AI解题/学习", "count": 4, "percentage": 6.25, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "浏览器主功能": {"total": 51, "subtopics": [{"name": "浏览器综合", "count": 27, "percentage": 52.94, "sample_posts": []}, {"name": "卸载/差评", "count": 8, "percentage": 15.69, "sample_posts": []}, {"name": "会员/自动续费", "count": 7, "percentage": 13.73, "sample_posts": []}, {"name": "广告/弹窗", "count": 5, "percentage": 9.8, "sample_posts": []}, {"name": "启动/性能", "count": 4, "percentage": 7.84, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "隐私与合规": {"total": 2, "subtopics": [{"name": "违规内容", "count": 2, "percentage": 100.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}}, "unclassified_count": 423, "unclassified_rate": 8.66}, "抖音app": {"platform": "抖音app", "total_records": 4909, "topic_distribution": [{"topic": "搜索引擎", "count": 1997, "percentage": 40.68}, {"topic": "网盘", "count": 1111, "percentage": 22.63}, {"topic": "内容消费", "count": 153, "percentage": 3.12}, {"topic": "浏览器主功能", "count": 141, "percentage": 2.87}, {"topic": "AI能力", "count": 138, "percentage": 2.81}, {"topic": "品牌与营销", "count": 11, "percentage": 0.22}, {"topic": "隐私与合规", "count": 11, "percentage": 0.22}, {"topic": "AI眼镜G1", "count": 2, "percentage": 0.04}], "sentiment_distribution": [{"sentiment": "0", "count": 3920, "percentage": 79.85}, {"sentiment": "1", "count": 625, "percentage": 12.73}, {"sentiment": "-1", "count": 364, "percentage": 7.41}], "subtopic_detail": {"搜索引擎": {"total": 1997, "subtopics": [{"name": "AI搜索/深度搜索", "count": 1108, "percentage": 55.48, "sample_posts": []}, {"name": "品牌/一般提及", "count": 751, "percentage": 37.61, "sample_posts": []}, {"name": "搜题/学习搜索", "count": 86, "percentage": 4.31, "sample_posts": []}, {"name": "搜索准确性", "count": 19, "percentage": 0.95, "sample_posts": []}, {"name": "无广告体验", "count": 14, "percentage": 0.7, "sample_posts": []}, {"name": "搜图/以图搜图", "count": 11, "percentage": 0.55, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "网盘": {"total": 1111, "subtopics": [{"name": "资源分享", "count": 511, "percentage": 45.99, "sample_posts": []}, {"name": "学习资料", "count": 394, "percentage": 35.46, "sample_posts": []}, {"name": "软件与工具", "count": 62, "percentage": 5.58, "sample_posts": []}, {"name": "转存与提取码", "count": 62, "percentage": 5.58, "sample_posts": []}, {"name": "影视资源", "count": 43, "percentage": 3.87, "sample_posts": []}, {"name": "限速与容量", "count": 15, "percentage": 1.35, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "内容消费": {"total": 153, "subtopics": [{"name": "视频/影视", "count": 98, "percentage": 64.05, "sample_posts": []}, {"name": "小说与漫画", "count": 32, "percentage": 20.92, "sample_posts": []}, {"name": "内容综合", "count": 18, "percentage": 11.76, "sample_posts": []}, {"name": "同人/饭圈资源", "count": 3, "percentage": 1.96, "sample_posts": []}, {"name": "教育内容", "count": 2, "percentage": 1.31, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "浏览器主功能": {"total": 141, "subtopics": [{"name": "浏览器综合", "count": 72, "percentage": 51.06, "sample_posts": []}, {"name": "会员/自动续费", "count": 30, "percentage": 21.28, "sample_posts": []}, {"name": "广告/弹窗", "count": 16, "percentage": 11.35, "sample_posts": []}, {"name": "启动/性能", "count": 15, "percentage": 10.64, "sample_posts": []}, {"name": "书签/同步", "count": 4, "percentage": 2.84, "sample_posts": []}, {"name": "卸载/差评", "count": 4, "percentage": 2.84, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI能力": {"total": 138, "subtopics": [{"name": "AI综合体验", "count": 100, "percentage": 72.46, "sample_posts": []}, {"name": "扫描识图/OCR", "count": 17, "percentage": 12.32, "sample_posts": []}, {"name": "AI解题/学习", "count": 9, "percentage": 6.52, "sample_posts": []}, {"name": "AI问答", "count": 8, "percentage": 5.8, "sample_posts": []}, {"name": "AI翻译", "count": 3, "percentage": 2.17, "sample_posts": []}, {"name": "AI写作/PPT", "count": 1, "percentage": 0.72, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "品牌与营销": {"total": 11, "subtopics": [{"name": "品牌提及", "count": 5, "percentage": 45.45, "sample_posts": []}, {"name": "KOL/达人种草", "count": 2, "percentage": 18.18, "sample_posts": []}, {"name": "会员/抽奖活动", "count": 2, "percentage": 18.18, "sample_posts": []}, {"name": "明星/代言", "count": 2, "percentage": 18.18, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "隐私与合规": {"total": 11, "subtopics": [{"name": "隐私泄露", "count": 6, "percentage": 54.55, "sample_posts": []}, {"name": "推送骚扰", "count": 3, "percentage": 27.27, "sample_posts": []}, {"name": "违规内容传播", "count": 1, "percentage": 9.09, "sample_posts": []}, {"name": "隐私综合", "count": 1, "percentage": 9.09, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI眼镜G1": {"total": 2, "subtopics": [{"name": "产品讨论", "count": 2, "percentage": 100.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}}, "unclassified_count": 1345, "unclassified_rate": 27.4}, "黑猫投诉": {"platform": "黑猫投诉", "total_records": 2347, "topic_distribution": [{"topic": "网盘", "count": 673, "percentage": 28.67}, {"topic": "浏览器主功能", "count": 521, "percentage": 22.2}, {"topic": "AI能力", "count": 472, "percentage": 20.11}, {"topic": "搜索引擎", "count": 160, "percentage": 6.82}, {"topic": "隐私与合规", "count": 43, "percentage": 1.83}, {"topic": "内容消费", "count": 5, "percentage": 0.21}, {"topic": "品牌与营销", "count": 2, "percentage": 0.09}, {"topic": "AI眼镜G1", "count": 1, "percentage": 0.04}], "sentiment_distribution": [{"sentiment": "-1", "count": 2346, "percentage": 99.96}, {"sentiment": "0", "count": 1, "percentage": 0.04}], "subtopic_detail": {"网盘": {"total": 673, "subtopics": [{"name": "网盘会员/VIP", "count": 362, "percentage": 53.79, "sample_posts": []}, {"name": "资源分享", "count": 269, "percentage": 39.97, "sample_posts": []}, {"name": "软件与工具", "count": 24, "percentage": 3.57, "sample_posts": []}, {"name": "限速与容量", "count": 11, "percentage": 1.63, "sample_posts": []}, {"name": "转存与提取码", "count": 5, "percentage": 0.74, "sample_posts": []}, {"name": "小说资源", "count": 1, "percentage": 0.15, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "浏览器主功能": {"total": 521, "subtopics": [{"name": "会员/自动续费", "count": 520, "percentage": 99.81, "sample_posts": []}, {"name": "浏览器综合", "count": 1, "percentage": 0.19, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI能力": {"total": 472, "subtopics": [{"name": "扫描识图/OCR", "count": 432, "percentage": 91.53, "sample_posts": []}, {"name": "AI综合体验", "count": 39, "percentage": 8.26, "sample_posts": []}, {"name": "AI问答", "count": 1, "percentage": 0.21, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "搜索引擎": {"total": 160, "subtopics": [{"name": "品牌/一般提及", "count": 153, "percentage": 95.62, "sample_posts": []}, {"name": "搜索准确性", "count": 6, "percentage": 3.75, "sample_posts": []}, {"name": "搜题/学习搜索", "count": 1, "percentage": 0.62, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "隐私与合规": {"total": 43, "subtopics": [{"name": "违规内容", "count": 35, "percentage": 81.4, "sample_posts": []}, {"name": "推送骚扰", "count": 8, "percentage": 18.6, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "内容消费": {"total": 5, "subtopics": [{"name": "小说与漫画", "count": 3, "percentage": 60.0, "sample_posts": []}, {"name": "视频/影视", "count": 2, "percentage": 40.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "品牌与营销": {"total": 2, "subtopics": [{"name": "会员/抽奖活动", "count": 2, "percentage": 100.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI眼镜G1": {"total": 1, "subtopics": [{"name": "价格/购买", "count": 1, "percentage": 100.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}}, "unclassified_count": 470, "unclassified_rate": 20.03}, "快手app": {"platform": "快手app", "total_records": 117, "topic_distribution": [{"topic": "搜索引擎", "count": 44, "percentage": 37.61}, {"topic": "网盘", "count": 29, "percentage": 24.79}, {"topic": "浏览器主功能", "count": 3, "percentage": 2.56}, {"topic": "AI能力", "count": 2, "percentage": 1.71}, {"topic": "AI眼镜G1", "count": 1, "percentage": 0.85}], "sentiment_distribution": [{"sentiment": "0", "count": 106, "percentage": 90.6}, {"sentiment": "1", "count": 7, "percentage": 5.98}, {"sentiment": "-1", "count": 4, "percentage": 3.42}], "subtopic_detail": {"搜索引擎": {"total": 44, "subtopics": [{"name": "品牌/一般提及", "count": 28, "percentage": 63.64, "sample_posts": []}, {"name": "无广告体验", "count": 7, "percentage": 15.91, "sample_posts": []}, {"name": "AI搜索/深度搜索", "count": 4, "percentage": 9.09, "sample_posts": []}, {"name": "搜索准确性", "count": 4, "percentage": 9.09, "sample_posts": []}, {"name": "竞品对比", "count": 1, "percentage": 2.27, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "网盘": {"total": 29, "subtopics": [{"name": "资源分享", "count": 16, "percentage": 55.17, "sample_posts": []}, {"name": "学习资料", "count": 7, "percentage": 24.14, "sample_posts": []}, {"name": "软件与工具", "count": 5, "percentage": 17.24, "sample_posts": []}, {"name": "转存与提取码", "count": 1, "percentage": 3.45, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "浏览器主功能": {"total": 3, "subtopics": [{"name": "启动/性能", "count": 2, "percentage": 66.67, "sample_posts": []}, {"name": "浏览器综合", "count": 1, "percentage": 33.33, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI能力": {"total": 2, "subtopics": [{"name": "AI综合体验", "count": 2, "percentage": 100.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI眼镜G1": {"total": 1, "subtopics": [{"name": "产品讨论", "count": 1, "percentage": 100.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}}, "unclassified_count": 38, "unclassified_rate": 32.48}, "酷安": {"platform": "酷安", "total_records": 393, "topic_distribution": [{"topic": "网盘", "count": 190, "percentage": 48.35}, {"topic": "搜索引擎", "count": 174, "percentage": 44.27}, {"topic": "浏览器主功能", "count": 20, "percentage": 5.09}, {"topic": "AI能力", "count": 4, "percentage": 1.02}], "sentiment_distribution": [{"sentiment": "0", "count": 336, "percentage": 85.5}, {"sentiment": "-1", "count": 48, "percentage": 12.21}, {"sentiment": "1", "count": 9, "percentage": 2.29}], "subtopic_detail": {"网盘": {"total": 190, "subtopics": [{"name": "资源分享", "count": 107, "percentage": 56.32, "sample_posts": []}, {"name": "转存与提取码", "count": 27, "percentage": 14.21, "sample_posts": []}, {"name": "软件与工具", "count": 26, "percentage": 13.68, "sample_posts": []}, {"name": "学习资料", "count": 12, "percentage": 6.32, "sample_posts": []}, {"name": "影视资源", "count": 11, "percentage": 5.79, "sample_posts": []}, {"name": "限速与容量", "count": 6, "percentage": 3.16, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "搜索引擎": {"total": 174, "subtopics": [{"name": "品牌/一般提及", "count": 156, "percentage": 89.66, "sample_posts": []}, {"name": "无广告体验", "count": 7, "percentage": 4.02, "sample_posts": []}, {"name": "竞品对比", "count": 7, "percentage": 4.02, "sample_posts": []}, {"name": "搜题/学习搜索", "count": 2, "percentage": 1.15, "sample_posts": []}, {"name": "AI搜索/深度搜索", "count": 2, "percentage": 1.15, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "浏览器主功能": {"total": 20, "subtopics": [{"name": "浏览器综合", "count": 6, "percentage": 30.0, "sample_posts": []}, {"name": "启动/性能", "count": 5, "percentage": 25.0, "sample_posts": []}, {"name": "广告/弹窗", "count": 4, "percentage": 20.0, "sample_posts": []}, {"name": "卸载/差评", "count": 3, "percentage": 15.0, "sample_posts": []}, {"name": "会员/自动续费", "count": 2, "percentage": 10.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}, "AI能力": {"total": 4, "subtopics": [{"name": "AI综合体验", "count": 2, "percentage": 50.0, "sample_posts": []}, {"name": "扫描识图/OCR", "count": 1, "percentage": 25.0, "sample_posts": []}, {"name": "AI解题/学习", "count": 1, "percentage": 25.0, "sample_posts": []}], "no_match_count": 0, "no_match_rate": 0.0}}, "unclassified_count": 5, "unclassified_rate": 1.27}};
+const OVERVIEW = [{"name": "微信", "total": 194499, "top_topic": "网盘", "top_topic_pct": 97.46, "positive": 0.3, "neutral": 99.3, "negative": 0.4, "unclassified_rate": 0.02}, {"name": "哔哩哔哩", "total": 7845, "top_topic": "网盘", "top_topic_pct": 83.5, "positive": 0.2, "neutral": 99.8, "negative": 0.1, "unclassified_rate": 0.3}, {"name": "小红书", "total": 8585, "top_topic": "搜索引擎", "top_topic_pct": 67.0, "positive": 14.7, "neutral": 75.9, "negative": 9.4, "unclassified_rate": 14.6}, {"name": "知乎", "total": 2148, "top_topic": "搜索引擎", "top_topic_pct": 78.4, "positive": 3.0, "neutral": 91.9, "negative": 5.2, "unclassified_rate": 3.0}, {"name": "百度贴吧", "total": 6184, "top_topic": "网盘", "top_topic_pct": 50.6, "positive": 1.5, "neutral": 97.4, "negative": 1.1, "unclassified_rate": 1.0}, {"name": "微博", "total": 4885, "top_topic": "网盘", "top_topic_pct": 54.8, "positive": 5.4, "neutral": 91.5, "negative": 3.1, "unclassified_rate": 8.7}, {"name": "抖音app", "total": 4909, "top_topic": "搜索引擎", "top_topic_pct": 58.1, "positive": 12.7, "neutral": 79.9, "negative": 7.4, "unclassified_rate": 27.5}, {"name": "黑猫投诉", "total": 2347, "top_topic": "网盘", "top_topic_pct": 35.9, "positive": 0, "neutral": 0.0, "negative": 100.0, "unclassified_rate": 20.0}, {"name": "快手app", "total": 117, "top_topic": "搜索引擎", "top_topic_pct": 72.2, "positive": 6.0, "neutral": 90.6, "negative": 3.4, "unclassified_rate": 32.5}, {"name": "酷安", "total": 393, "top_topic": "搜索引擎", "top_topic_pct": 48.7, "positive": 2.3, "neutral": 85.5, "negative": 12.2, "unclassified_rate": 1.3}];
+
+// ========== 1. 构建总览表 ==========
+function buildOverviewTable() {
+  const tbody = document.getElementById('overview-table-body');
+  OVERVIEW.forEach(p => {
+    const tr = document.createElement('tr');
+    const pos = p.positive.toFixed(1);
+    const neu = p.neutral.toFixed(1);
+    const neg = p.negative.toFixed(1);
+    tr.innerHTML = `
+      <td><strong>${p.name}</strong></td>
+      <td>${p.total.toLocaleString()}</td>
+      <td><span class="tag tag-topic">${p.top_topic}</span></td>
+      <td>${p.top_topic_pct}%</td>
+      <td><span style="color:${p.unclassified_rate > 15 ? '#e67e22' : '#95a5a6'}; font-weight:${p.unclassified_rate > 15 ? '600' : '400'};">${p.unclassified_rate}%</span></td>
+      <td>
+        <div class="sentiment-bar">
+          ${pos > 0 ? `<div class="sent-seg sent-pos" style="width:${pos}%" title="正向${pos}%">${pos > 5 ? pos + '%' : ''}</div>` : ''}
+          ${neu > 0 ? `<div class="sent-seg sent-neu" style="width:${neu}%" title="中性${neu}%">${neu > 10 ? neu + '%' : ''}</div>` : ''}
+          ${neg > 0 ? `<div class="sent-seg sent-neg" style="width:${neg}%" title="负向${neg}%">${neg > 5 ? neg + '%' : ''}</div>` : ''}
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ========== 4. 情感雷达图 ==========
+function buildSentimentRadar() {
+  const chart = echarts.init(document.getElementById('chart-sentiment-radar'));
+  const platforms = Object.keys(DATA);
+  
+  const indicators = platforms.map(p => ({ name: p, max: 20 }));
+  
+  const posData = platforms.map(p => {
+    const s = (DATA[p].sentiment_distribution || []).find(x => x.sentiment === '正向');
+    return s ? s.percentage : 0;
+  });
+  const negData = platforms.map(p => {
+    const s = (DATA[p].sentiment_distribution || []).find(x => x.sentiment === '负向');
+    return s ? Math.min(s.percentage, 20) : 0; // 限制黑猫投诉100%不爆图
+  });
+  
+  chart.setOption({
+    tooltip: {},
+    legend: { top: 0, data: ['正向情感%', '负向情感%(截断20)'] },
+    radar: {
+      indicator: indicators,
+      radius: '60%',
+      axisName: { color: '#7f8c8d', fontSize: 11 }
+    },
+    series: [{
+      type: 'radar',
+      data: [
+        { value: posData, name: '正向情感%', itemStyle: { color: '#27ae60' }, areaStyle: { opacity: 0.3 } },
+        { value: negData, name: '负向情感%(截断20)', itemStyle: { color: '#e74c3c' }, areaStyle: { opacity: 0.3 } }
+      ]
+    }]
+  });
+}
+
+// ========== 5. 正向TOP5 ==========
+function buildPositiveTop() {
+  const chart = echarts.init(document.getElementById('chart-positive-top'));
+  const items = OVERVIEW
+    .map(p => ({ name: p.name, value: p.positive }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 5);
+  
+  chart.setOption({
+    tooltip: { trigger: 'axis' },
+    grid: { left: '3%', right: '8%', bottom: '3%', top: '5%', containLabel: true },
+    xAxis: { type: 'value', axisLabel: { formatter: '{value}%' } },
+    yAxis: { type: 'category', data: items.map(x => x.name).reverse() },
+    series: [{
+      type: 'bar',
+      data: items.map(x => x.value).reverse(),
+      itemStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+          { offset: 0, color: '#74b9ff' },
+          { offset: 1, color: '#27ae60' }
+        ])
+      },
+      label: { show: true, position: 'right', formatter: '{c}%' }
+    }]
+  });
+}
+
+// ========== 6. 构建平台可展开模块 ==========
+function getSentimentClass(sent) {
+  if (sent === '正向') return 'tag-sentiment-pos';
+  if (sent === '负向') return 'tag-sentiment-neg';
+  return 'tag-sentiment-neu';
+}
+function getVocClass(level) {
+  return 'tag-voc-' + level;
+}
+
+function buildPlatformAccordion() {
+  const container = document.getElementById('platform-accordion');
+  // 每条洞察 = { title, reason, level1, subtopic(可选) }
+  // subtopic 指定时，佐证原贴来源于该二级话题的sample_posts
+  const platformConclusions = {
+    '微信': {
+      type: '网盘资源分发主阵地 · 二级分类优化示范平台',
+      conclusions: [
+        {
+          title: '结论 1：搜索引擎中"搜题/学习搜索"独占35.4%，微信是K12学习场景首要入口',
+          reason: '微信公众号大量分享"中考/高考试卷+夸克网盘链接"模板化内容，形成"公众号吸粉-网盘导流"的链路。搜索引擎话题下"搜题/学习搜索"二级维度占比高达35.4%，远超其他子话题。',
+          level1: '搜索引擎', subtopic: '搜题/学习搜索'
+        },
+        {
+          title: '结论 2：网盘话题中"资源分享/转存"占92.8%（优化后），是公众号变现核心载体',
+          reason: '微信公众号通过"知识资料包+夸克网盘链接+扫码关注"实现流量闭环，网盘分享是最高频行为。经过二级分类优化后，资源分享（79.3%）和转存与提取码（13.5%）合计占92.8%，远超其他子维度。',
+          level1: '网盘', subtopic: '资源分享/转存'
+        }
+      ]
+    },
+    '哔哩哔哩': {
+      type: '网盘资源分享主场 · UP主变现核心渠道',
+      conclusions: [
+        {
+          title: '结论 1：B站网盘话题中"资源分享/转存"占98.1%，堪称绝对主导',
+          reason: 'UP主把夸克网盘作为视频附赠资料的首选渠道，6,404条分享帖中"链接+提取码"模板高度一致，资源类型覆盖教程、软件、学习资料等。其他子维度（网盘VIP、容量、限速）几乎为零。',
+          level1: '网盘', subtopic: '资源分享/转存'
+        },
+        {
+          title: '结论 2：搜索引擎在B站关注度极低（仅16.2%且未命中率98.5%）',
+          reason: '搜索话题未命中任何具体子维度的比例高达98.5%，说明B站用户几乎不讨论夸克的搜索能力，B站是夸克的"纯网盘平台"。',
+          level1: '搜索引擎'
+        }
+      ]
+    },
+    '小红书': {
+      type: '正向口碑放大器 · AI搜索种草首选',
+      conclusions: [
+        {
+          title: '结论 1：搜索引擎子维度中"深度搜索/AI搜索"占54.0%，是核心种草话题',
+          reason: '小红书用户最关注的不是传统搜索，而是"AI搜索/深度搜索"能力（54.0%），其次是"无广告体验"(8.6%)和"搜题"(5.6%)。这说明小红书用户把夸克定位为"AI生产力工具"，与B站/微信的"资源工具"定位完全不同。',
+          level1: '搜索引擎', subtopic: '深度搜索/AI搜索'
+        },
+        {
+          title: '结论 2：内容消费中"小说与漫画"占63.5%，读书场景是正向情感重要来源',
+          reason: '内容消费子维度下"小说与漫画"占比63.5%，用户分享"免费小说+无广阅读+AI听书"的完整体验链路，是小红书正向率14.7%（10平台最高）的重要贡献者。',
+          level1: '内容消费', subtopic: '小说与漫画'
+        },
+        {
+          title: '结论 3：网盘话题中"资源分享/转存"(52.1%) + "下载保存"(20.4%)反映工具化诉求',
+          reason: '与B站纯分享不同，小红书用户更多讨论"如何使用网盘"（下载保存占20.4%），说明小红书用户在主动学习和模仿使用方法。',
+          level1: '网盘', subtopic: '资源分享/转存'
+        }
+      ]
+    },
+    '知乎': {
+      type: '深度评测阵地 · 理性对比主战场',
+      conclusions: [
+        {
+          title: '结论 1：搜索引擎子维度分散均衡，"无广告"与"搜索准确性"并列首位(各9%+)',
+          reason: '知乎用户以理性评测视角讨论夸克，"无广告体验"(9.2%)、"搜索准确性"(9.1%)、"搜题/学习"(6.8%)、"深度搜索/AI"(6.5%)四项并驾齐驱，不像其他平台有单一热点，体现知乎"多维度评测"的平台调性。',
+          level1: '搜索引擎'
+        },
+        {
+          title: '结论 2：网盘话题中"资源分享/转存"占67.2%，学习资源是主要讨论场景',
+          reason: '知乎的网盘话题集中在"资源分享"（67.2%）和"下载保存"（12.9%），特别是教育资源（2.0%）、影视资源（2.3%）占比相对较高，符合知乎用户"知识型"标签。',
+          level1: '网盘', subtopic: '资源分享/转存'
+        },
+        {
+          title: '结论 3：AI能力话题中"AI问答"占24.6%，远超其他子维度',
+          reason: '知乎用户对AI问答能力讨论最多(24.6%)，其次是"扫描识图/OCR"(5.3%)、"AI翻译"(5.3%)。体现知乎用户对AI的测评导向偏"回答质量"而非"实用场景"。',
+          level1: 'AI能力', subtopic: 'AI问答'
+        }
+      ]
+    },
+    '百度贴吧': {
+      type: '网盘资源传播长尾 · 垂直吧聚集',
+      conclusions: [
+        {
+          title: '结论 1：网盘"资源分享/转存"占97.5%，与B站模式几乎一致',
+          reason: '贴吧网盘话题高度集中在"资源分享/转存"（97.5%），是另一个纯资源分享型阵地。结合贴吧垂直板块结构（小说吧、游戏吧等），夸克网盘已深度嵌入长尾兴趣社区。',
+          level1: '网盘', subtopic: '资源分享/转存'
+        },
+        {
+          title: '结论 2：内容消费中"小说与漫画"占66.7%，验证贴吧小说生态的强需求',
+          reason: '贴吧在"内容消费"下用户讨论"小说与漫画"占66.7%，"视频影视"占16.7%，反映贴吧深度用户对小说等文本内容的高粘性。',
+          level1: '内容消费', subtopic: '小说与漫画'
+        }
+      ]
+    },
+    '微博': {
+      type: '品牌营销曝光 · 饭圈资源交换中心',
+      conclusions: [
+        {
+          title: '结论 1：网盘"资源分享/转存"占87.9%，微博是夸克网盘最活跃阵地',
+          reason: '微博网盘话题中"资源分享/转存"占比87.9%，且未命中率仅0.8%（10平台最低），体现微博作为开放式社交平台对资源传播的高适配性。',
+          level1: '网盘', subtopic: '资源分享/转存'
+        },
+        {
+          title: '结论 2：内容消费中"同人/饭圈资源"占68.1%，饭圈是独特话题集群',
+          reason: '微博独有的特征：内容消费子维度下"同人/饭圈资源"高达68.1%（远超"视频影视"15.1%），表明微博粉丝群体大量用夸克网盘传播同人作品和明星资源，是营销合作的切入点。',
+          level1: '内容消费', subtopic: '同人/饭圈资源'
+        },
+        {
+          title: '结论 3：品牌与营销话题占比18.7%（10平台最高），AI眼镜G1讨论聚集',
+          reason: '微博是夸克品牌营销主阵地，AI眼镜G1专属讨论达119条，其中"产品种草"和"使用体验"是最常出现的子维度。',
+          level1: 'AI眼镜G1'
+        }
+      ]
+    },
+    '抖音app': {
+      type: '年轻用户触达 · 短视频内容挑战',
+      conclusions: [
+        {
+          title: '结论 1：AI能力未命中率68.1%，短视频形式导致分类难度大',
+          reason: '抖音AI能力话题下，扫描识图/OCR(10.9%)、AI问答(10.1%)是主要子维度，但整体未命中率达68.1%，说明视频+口播形式的讨论缺少固定关键词，需专门优化短视频分类方式。',
+          level1: 'AI能力'
+        },
+        {
+          title: '结论 2：内容消费中"视频/影视"占27.7% + "小说与漫画"20.0%，娱乐场景集中',
+          reason: '抖音用户对夸克的使用场景明显偏娱乐化，视频影视(27.7%)与小说漫画(20.0%)合计近一半，区别于微信的学习场景和B站的纯分享场景。',
+          level1: '内容消费', subtopic: '视频/影视'
+        }
+      ]
+    },
+    '黑猫投诉': {
+      type: '⚠️ 负面集中地 · 紧急治理重点',
+      conclusions: [
+        {
+          title: '结论 1：网盘话题下"网盘会员/VIP"投诉占42.6%，自动续费是头号痛点',
+          reason: '黑猫投诉中网盘话题的二级分布极具辨识度：42.6%都是"网盘会员/VIP"问题（即自动续费、退款等），远超第二位"下载保存"(11.9%)。这是夸克当前最需紧急处理的合规和体验问题。',
+          level1: '网盘', subtopic: '网盘会员/VIP'
+        },
+        {
+          title: '结论 2：AI能力话题中"扫描识图/OCR"占91.3%，体验问题超预期集中',
+          reason: '最令人意外的发现：AI能力负面投诉中"扫描识图/OCR"子维度占比高达91.3%（472条中431条），说明扫描识图功能体验存在系统性问题，远超AI问答、AI写作等其他AI子功能。',
+          level1: 'AI能力', subtopic: '扫描识图/OCR'
+        },
+        {
+          title: '结论 3：隐私与合规中"违规内容"占72.1%，内容审核风险高',
+          reason: '隐私与合规投诉中"违规内容"（擦边/不良信息）占72.1%，"推送骚扰"占23.3%。虽然绝对量不大(43条)，但涉及央视监管级别话题，风险等级高。',
+          level1: '隐私与合规', subtopic: '违规内容'
+        }
+      ]
+    },
+    '快手app': {
+      type: '小众声量 · 下沉市场反馈',
+      conclusions: [
+        {
+          title: '结论 1：网盘"下载保存"(56.2%)+"资源分享"(31.2%)，使用性诉求强',
+          reason: '快手用户更多讨论"如何下载/保存网盘内容"（56.2%），而非"如何分享"（31.2%），与其他平台的分享主导截然不同，反映下沉市场用户更看重内容获取。',
+          level1: '网盘', subtopic: '网盘下载/保存'
+        },
+        {
+          title: '结论 2：搜索引擎未命中率77.2%，短视频内容适配差',
+          reason: '快手搜索话题下虽有少量"无广告体验"(12.3%)、"AI搜索"(7.0%)的讨论，但77.2%未命中任何子维度关键词，说明短视频平台的讨论语境需要独立的种子句体系。',
+          level1: '搜索引擎'
+        }
+      ]
+    },
+    '酷安': {
+      type: '技术极客 · 问题反馈敏锐',
+      conclusions: [
+        {
+          title: '结论 1：网盘"资源分享/转存"占80.6%，极客用户也偏分享导向',
+          reason: '酷安的网盘话题集中度与微博、B站相似（资源分享80.6%），但绝对量小(141条)。酷安更大价值在于浏览器子维度的早期问题预警。',
+          level1: '网盘', subtopic: '资源分享/转存'
+        },
+        {
+          title: '结论 2：浏览器主功能中"启动/性能"25%、"广告弹窗"15%、"卸载差评"15%均等分布',
+          reason: '酷安用户对浏览器问题的反馈非常细致：启动/性能问题(25.0%)、广告弹窗(15.0%)、卸载差评(15.0%)、自动续费(5.0%)等子维度都有讨论，是产品经理应高度关注的早期问题来源。',
+          level1: '浏览器主功能', subtopic: '启动/性能'
+        }
+      ]
+    }
+  };
+  
+  Object.keys(DATA).forEach((platform, idx) => {
+    const data = DATA[platform];
+    const conf = platformConclusions[platform] || { type: '综合分析', conclusions: [] };
+    
+    const item = document.createElement('div');
+    item.className = 'accordion-item';
+    
+    const header = document.createElement('div');
+    header.className = 'accordion-header';
+    header.innerHTML = `
+      <div>
+        <span class="title">${platform}</span>
+        <span style="color:#95a5a6; font-size:13px; margin-left:10px;">· ${conf.type}</span>
+        <span class="badge">${data.total_records.toLocaleString()}条</span>
+      </div>
+      <span class="arrow">▼</span>
+    `;
+    
+    const body = document.createElement('div');
+    body.className = 'accordion-body';
+    
+    // 话题分布条形图（基于"已分类数据"重新计算占比，剔除未分类后归一）
+    const validTopics = (data.topic_distribution || []);
+    const classifiedTotal = validTopics.reduce((sum, t) => sum + t.count, 0);
+    const topicRows = validTopics.slice(0, 5).map(t => {
+      const pct = classifiedTotal > 0 ? (t.count / classifiedTotal * 100) : 0;
+      return `
+        <tr>
+          <td style="width:30%;"><strong>${t.topic}</strong></td>
+          <td style="width:15%;">${t.count.toLocaleString()}</td>
+          <td class="bar-cell">
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${pct.toFixed(1)}%"></div>
+              <span class="bar-label">${pct.toFixed(1)}%</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+    
+    const unclassifiedNote = data.unclassified_rate > 0 ? `
+      <div style="margin-top:8px; padding:8px 12px; background:#fef5e7; border-left:3px solid #f39c12; font-size:12px; color:#7f6000; border-radius:4px;">
+        ℹ️ 另有 <strong>${data.unclassified_count.toLocaleString()}</strong> 条（${data.unclassified_rate}%）内容未匹配任何种子句（即"分类体系未覆盖"），未纳入话题统计。
+      </div>
+    ` : '';
+    
+    // 佐证原贴：根据conclusion中指定的 level1+subtopic 精准挑选
+    function pickEvidence(level1, subtopic) {
+      const subDetail = (data.subtopic_detail || {})[level1];
+      if (!subDetail) return [];
+      if (subtopic) {
+        const s = (subDetail.subtopics || []).find(x => x.name === subtopic);
+        return s ? (s.sample_posts || []) : [];
+      }
+      // 未指定二级：取该一级下互动最高的若干帖
+      let allPosts = [];
+      (subDetail.subtopics || []).forEach(s => {
+        (s.sample_posts || []).forEach(p => {
+          allPosts.push({ ...p, _sub: s.name });
+        });
+      });
+      allPosts.sort((a,b) => (b.interaction||0) - (a.interaction||0));
+      return allPosts.slice(0, 3);
+    }
+    
+    // 构建二级话题矩阵（针对 TOP 3 一级话题展开二级）
+    function buildSubtopicMatrix() {
+      const subDetail = data.subtopic_detail || {};
+      const top3 = validTopics.slice(0, 3);
+      if (top3.length === 0 || Object.keys(subDetail).length === 0) return '';
+      
+      let html = '<h3>🎯 二级话题细分矩阵（TOP 3 一级话题展开）</h3>';
+      html += '<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px; margin:12px 0;">';
+      
+      top3.forEach(t => {
+        const sub = subDetail[t.topic];
+        if (!sub) return;
+        const subs = (sub.subtopics || []).slice(0, 6);
+        if (subs.length === 0) return;
+        const maxPct = Math.max(...subs.map(s => s.percentage));
+        
+        html += `
+          <div style="background:#fafbfc; border:1px solid #e8ecef; border-radius:8px; padding:14px;">
+            <div style="font-weight:600; color:#2c3e50; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+              <span>📂 ${t.topic}</span>
+              <span style="font-size:11px; color:#95a5a6; font-weight:400;">共${sub.total.toLocaleString()}条</span>
+            </div>
+        `;
+        subs.forEach(s => {
+          const barPct = maxPct > 0 ? (s.percentage / maxPct * 100) : 0;
+          html += `
+            <div style="margin-bottom:6px; font-size:12.5px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                <span style="color:#34495e;">${s.name}</span>
+                <span style="color:#4a90e2; font-weight:600;">${s.percentage}%</span>
+              </div>
+              <div style="background:#ecf0f1; height:6px; border-radius:3px; overflow:hidden;">
+                <div style="background:linear-gradient(90deg, #4a90e2, #74b9ff); height:100%; width:${barPct}%; transition:width 0.6s;"></div>
+              </div>
+              <div style="font-size:11px; color:#95a5a6; margin-top:1px;">${s.count.toLocaleString()}条</div>
+            </div>
+          `;
+        });
+        if (sub.no_match_rate > 0) {
+          html += `<div style="font-size:11px; color:#e67e22; margin-top:6px;">⚠ 未命中二级关键词: ${sub.no_match_rate}%</div>`;
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+      return html;
+    }
+    
+    // 佐证原贴
+    let evidenceHtml = '';
+    conf.conclusions.forEach(c => {
+      const posts = pickEvidence(c.level1, c.subtopic);
+      const subTag = c.subtopic ? `<span style="background:#4a90e2; color:white; padding:2px 10px; border-radius:10px; font-size:11px; margin-left:8px;">${c.level1} › ${c.subtopic}</span>` : (c.level1 ? `<span style="background:#95a5a6; color:white; padding:2px 10px; border-radius:10px; font-size:11px; margin-left:8px;">${c.level1}</span>` : '');
+      evidenceHtml += `
+        <div class="insight-card" style="background: linear-gradient(90deg, #f0f7ff 0%, white 100%);">
+          <div class="insight-title">🔎 ${c.title} ${subTag}</div>
+          <div class="insight-content" style="margin: 8px 0;"><strong>分析：</strong>${c.reason}</div>
+          ${posts.length > 0 ? '<div style="margin-top:12px; font-size:13px; color:#4a90e2;"><strong>📌 数据佐证（真实用户原贴）：</strong></div>' : ''}
+      `;
+      posts.slice(0, 2).forEach(post => {
+        const sentTag = getSentimentClass(post.sentiment);
+        const vocTag = getVocClass(post.voc_quality || 'C');
+        evidenceHtml += `
+          <div class="evidence-post">
+            <div class="post-meta">
+              ${post.matched_kw ? `<span class="tag" style="background:#fff3cd; color:#856404;">命中关键词: ${post.matched_kw}</span>` : ''}
+              ${post.sentiment ? `<span class="tag ${sentTag}">${post.sentiment}</span>` : ''}
+              ${post.voc_quality ? `<span class="tag ${vocTag}">VOC-${post.voc_quality}级</span>` : ''}
+              ${post.expression ? `<span class="tag tag-expression">${post.expression}</span>` : ''}
+              <span class="tag tag-interaction">互动 ${(post.interaction || 0).toLocaleString()}</span>
+            </div>
+            ${post.title ? `<div class="post-title">${post.title}</div>` : ''}
+            <div class="post-content">${post.content}</div>
+          </div>
+        `;
+      });
+      evidenceHtml += `</div>`;
+    });
+    
+    body.innerHTML = `
+      <div class="accordion-body-inner">
+        <h3 style="margin-top:0;">📊 一级话题分布 TOP 5</h3>
+        <table class="data-table">
+          <thead>
+            <tr><th>一级话题</th><th>数量</th><th>占比（已分类）</th></tr>
+          </thead>
+          <tbody>${topicRows}</tbody>
+        </table>
+        ${unclassifiedNote}
+        
+        ${buildSubtopicMatrix()}
+        
+        <h3>💡 核心洞察与数据佐证（基于二级维度）</h3>
+        ${evidenceHtml || '<p style="color:#95a5a6;">暂无更多佐证数据</p>'}
+      </div>
+    `;
+    
+    header.addEventListener('click', () => {
+      header.classList.toggle('active');
+      body.classList.toggle('active');
+    });
+    
+    item.appendChild(header);
+    item.appendChild(body);
+    container.appendChild(item);
+    
+    // 默认展开第一个
+    if (idx === 0) {
+      header.classList.add('active');
+      body.classList.add('active');
+    }
+  });
+}
+
+// ========== 初始化 ==========
+document.addEventListener('DOMContentLoaded', () => {
+  buildOverviewTable();
+  buildSentimentRadar();
+  buildPositiveTop();
+  buildPlatformAccordion();
+  
+  // 滚动淡入动画
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  
+  // 响应式resize
+  window.addEventListener('resize', () => {
+    ['chart-topic-stack','chart-sentiment','chart-sentiment-radar','chart-positive-top'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const inst = echarts.getInstanceByDom(el);
+        if (inst) inst.resize();
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>
