@@ -256,11 +256,6 @@ li.yel { color: #ef6c00; }
 </div>
 </div>
 
-<div class="chart-wrap">
-  <div class="chart-title">📈 四家有效互动 vs UGC 真声量对比</div>
-  <canvas id="chartOverview"></canvas>
-</div>
-
 <div class="warn-text">⚠️ <b>统一口径说明</b>：豆包/DS 的 L1 数据采集时已预筛"互动 ≥51"，元宝/千问是全量收集（含 0 互动死帖）。直接对比 UGC 总条数会严重误导（元宝 16,087 vs 豆包 48,226 看似差 3 倍）。本报告所有对比已统一为<b>"互动 ≥51 有效 UGC"</b>口径——元宝真实声量为 529 条，比豆包少 91 倍、比 DS 少 36 倍。但元宝单帖平均互动 2,087 比豆包（1,143）高 83%，单帖质量四家第二。</div>
 
 <h2 id="sec-1-2">2. 6 条核心判断（每条 = 结论 + 证据 + 建议）</h2>
@@ -6344,7 +6339,7 @@ li.yel { color: #ef6c00; }
     <tr><th style="width:60px">编号</th><th style="width:180px">场景名</th><th>判定关键词（命中任一即归类）</th></tr>
   </thead>
   <tbody>
-    <tr><td><b>S01</b></td><td>学习 / 学生辅导</td><td>学生、家长*学、辅导、作业、英语、数学、考试、备考、降重、论文、读书、小学、初中、高中</td></tr>
+    <tr><td><b>S01</b></td><td>学习 / 学生辅导</td><td>学生、家长教学、辅导、作业、英语、数学、考试、备考、降重、论文、读书、小学、初中、高中</td></tr>
     <tr><td><b>S02</b></td><td>教学 / 教师备课</td><td>教师、老师、备课、教学、教研、课堂、教案、教育工作、讲课、助教</td></tr>
     <tr><td><b>S03</b></td><td>职场办公效率</td><td>简历、面试、求职、offer、打工、职场、PPT、汇报、周报、邮件、会议、办公、工作流、Excel、公司、同事</td></tr>
     <tr><td><b>S04</b></td><td>代码 / 开发者</td><td>代码、coding、程序、debug、bug、开发者、Python、Java、前端、后端、GitHub、API、Claude Code</td></tr>
@@ -6356,17 +6351,15 @@ li.yel { color: #ef6c00; }
     <tr><td><b>S10</b></td><td>活动 / 福利 / 营销</td><td>福利、红包、签到、抽奖、VIP、会员、天卡、免费领、优惠、积分、邀请码</td></tr>
   </tbody>
 </table>
-<p class="hint"><b>分类原则</b>：① 对齐 AI 行业常见场景分类（教育 / 工作 / 生活 / 情感 / 创作）；② 每类关键词可枚举，避免玄学命名；③ 覆盖四家共性，非单家适配；④ S08 品牌 / S09 反馈 / S10 营销 单独拎出，用于区分「真实需求」vs「被投喂的营销」</p>
-<p class="hint"><b>已知局限</b>：① 首条优先匹配——同时命中多类只归第一类（如「用 AI 写 PPT」被归 S03 而非 S05）；② 关键词覆盖不全（如"AI 八字"未命中 S07）；③ 小众场景（AI 播客 / AI 声音克隆 / 医疗咨询等）被合并到 S06 长尾；④ 元宝 V4 早期 <code>user_scenario</code> 字段曾是自由文本，后补 <code>user_scenario_std</code> 对齐 S01-S10</p>
+<p class="hint"><b>分类原则</b>：① 对齐 AI 行业常见场景分类（教育 / 工作 / 生活 / 情感 / 创作）；② 覆盖四家共性，非单家适配；③ S08 品牌 / S09 反馈 / S10 营销 单独拎出，用于区分「真实需求」vs「被投喂的营销」</p>
+<p class="hint"><b>已知局限</b>：① 首条优先匹配——同时命中多类只归第一类（如「用 AI 写 PPT」被归 S03 而非 S05）；② 关键词覆盖不全（如"AI 八字"未命中 S07）；③ 小众场景（AI 播客 / AI 声音克隆 / 医疗咨询等）被合并到 S06 长尾</p>
 
-<h3>逻辑锁</h3>
-<p>V1-V6 全 0 违规</p>
 
 <h3 id="sec-app-tier">🗂 达人分层口径说明</h3>
-<p class="hint"><b>分层基于单帖互动量，而非粉丝量</b>——因 L1 采集源（微信公众号/抖音/小红书等）未提供粉丝量字段。本报告采用单帖互动量作为代理指标：</p>
+<p class="hint"><b>分层基于单帖互动量，而非粉丝量</b></p>
 <table class="scene-rule-table">
   <thead>
-    <tr><th style="width:200px">层级名称（交互版 V9）</th><th style="width:180px">传统名称参考</th><th>互动量阈值</th></tr>
+    <tr><th style="width:200px">层级名称</th><th style="width:180px">传统名称参考</th><th>互动量阈值</th></tr>
   </thead>
   <tbody>
     <tr><td>高互动帖（≥1000）</td><td>≈ 传统"头部KOL"</td><td>互动量 ≥ 1,000</td></tr>
@@ -6375,8 +6368,7 @@ li.yel { color: #ef6c00; }
     <tr><td>无互动/长尾</td><td>—</td><td>互动量 &lt; 10（含 0）</td></tr>
   </tbody>
 </table>
-<p class="hint"><b>注意</b>：此分层仅用于报告展示层面的标签命名，L1 原始数据中达人分层字段不受影响，底层计算逻辑保持不变。</p>
-
+<p class="hint">
 <h3>报告生成</h3>
 <p>本 HTML 由 step_L3_generate_html.py 生成</p>
 </section>
