@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI 产品月报 · 腾讯元宝 · 2026 年 4 月</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+  :root{
+    --bg:#f7f8fb;
+    --panel:#ffffff;
+    --text:#1f2330;
+    --muted:#6b7280;
+    --line:#e7e9ef;
+    --primary:#3a6df0;
+    --primary-soft:#eaf0ff;
+    --accent:#10b981;
+    --warn:#f59e0b;
+    --danger:#ef4444;
+    --yb:#3a6df0;
+    --db:#ff7a45;
+    --ds:#7c3aed;
+    --qw:#0ea5e9;
+    --kk:#10b981;
+    --shadow:0 2px 12px rgba(20,30,80,.05);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    font-size:14px;line-height:1.65}
+  a{color:inherit;text-decoration:none}
+
+  /* layout */
+  .layout{display:flex;min-height:100vh}
+  .sidebar{
+    width:240px;flex-shrink:0;background:#fff;border-right:1px solid var(--line);
+    position:sticky;top:0;height:100vh;overflow-y:auto;padding:24px 16px;
+  }
+  .brand{font-weight:700;font-size:15px;color:var(--text);margin-bottom:4px}
+  .brand .tag{display:inline-block;background:var(--primary-soft);color:var(--primary);
+    font-size:11px;padding:2px 8px;border-radius:10px;margin-left:6px;font-weight:500}
+  .sub{color:var(--muted);font-size:12px;margin-bottom:24px}
+  .nav{display:flex;flex-direction:column;gap:2px}
+  .nav a{padding:8px 12px;border-radius:8px;color:#4b5263;font-size:13px;
+    border-left:2px solid transparent;transition:all .15s}
+  .nav a:hover{background:#f3f5fb;color:var(--primary)}
+  .nav a.active{background:var(--primary-soft);color:var(--primary);font-weight:600}
+  .nav .group{font-size:11px;color:var(--muted);padding:14px 12px 4px;letter-spacing:.5px;text-transform:uppercase}
+
+  .main{flex:1;max-width:calc(100% - 240px)}
+  .container{max-width:1100px;margin:0 auto;padding:36px 40px 80px}
+
+  /* hero */
+  .hero{background:linear-gradient(135deg,#3a6df0 0%,#7c3aed 100%);
+    color:#fff;border-radius:16px;padding:32px 36px;margin-bottom:24px;box-shadow:var(--shadow)}
+  .hero h1{font-size:22px;margin:0 0 6px;font-weight:700;letter-spacing:.3px}
+  .hero .meta{font-size:12px;opacity:.85;margin-bottom:16px}
+  .hero .lead{font-size:14.5px;line-height:1.75;opacity:.96}
+  .hero .lead strong{color:#ffd966}
+
+  /* sections */
+  section{margin-bottom:36px;scroll-margin-top:20px}
+  h2.sec{font-size:18px;margin:0 0 14px;display:flex;align-items:center;gap:10px}
+  h2.sec::before{content:"";width:4px;height:18px;background:var(--primary);border-radius:2px}
+  h3.sub-sec{font-size:15px;color:var(--text);margin:18px 0 10px}
+  h4.mini{font-size:13.5px;color:var(--text);margin:14px 0 8px;font-weight:600}
+  p{margin:6px 0}
+  .muted{color:var(--muted)}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:20px 24px;box-shadow:var(--shadow)}
+  .card + .card{margin-top:14px}
+
+  /* KPI row */
+  .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+  .kpi .name{font-size:12px;color:var(--muted);margin-bottom:6px}
+  .kpi .val{font-size:18px;font-weight:700;color:var(--text)}
+  .kpi.yb .val{color:var(--yb)}
+  .kpi small{display:block;font-size:11px;color:var(--muted);margin-top:2px;font-weight:400}
+
+  /* findings list */
+  .findings{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .finding{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;
+    border-left:3px solid var(--primary);transition:transform .15s,box-shadow .15s}
+  .finding:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(58,109,240,.12)}
+  .finding .num{display:inline-block;background:var(--primary-soft);color:var(--primary);
+    font-weight:700;font-size:12px;width:22px;height:22px;border-radius:6px;
+    text-align:center;line-height:22px;margin-right:8px}
+  .finding .title{font-weight:600;font-size:13.5px;margin-bottom:6px}
+  .finding .desc{color:#4b5263;font-size:13px;line-height:1.7}
+
+  /* tabs */
+  .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+  .tab{padding:7px 14px;background:#fff;border:1px solid var(--line);border-radius:20px;
+    cursor:pointer;font-size:12.5px;color:#4b5263;transition:all .15s;user-select:none}
+  .tab:hover{border-color:var(--primary);color:var(--primary)}
+  .tab.active{background:var(--primary);border-color:var(--primary);color:#fff}
+  .tab-panel{display:none}
+  .tab-panel.active{display:block}
+
+  /* tables */
+  table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;
+    border-radius:10px;overflow:hidden}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#f4f6fb;color:#374151;font-weight:600;font-size:12.5px;white-space:nowrap}
+  tbody tr:hover{background:#fafbfd}
+  .pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11.5px;font-weight:500}
+  .pill.gold{background:#fff5d6;color:#a96f00}
+  .pill.silver{background:#eef1f5;color:#4b5563}
+  .pill.warn{background:#fff1d6;color:#a85a00}
+  .pill.danger{background:#ffe1e1;color:#c0260c}
+  .pill.ok{background:#dcfce7;color:#0a7a3b}
+  .row-yb{background:#f4f8ff !important}
+  .row-yb td:first-child{font-weight:600;color:var(--primary)}
+
+  /* charts */
+  .chart{width:100%;height:340px}
+  .chart-sm{width:100%;height:280px}
+  .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+  /* strategy cards */
+  .strategy{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
+  .strat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+  .strat .badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:10px;
+    font-weight:600;margin-bottom:8px}
+  .strat.a .badge{background:#fff1d6;color:#a85a00}
+  .strat.b .badge{background:#dcfce7;color:#0a7a3b}
+  .strat.c .badge{background:var(--primary-soft);color:var(--primary)}
+  .strat h4{margin:0 0 10px;font-size:14px}
+  .strat ul{margin:0;padding-left:18px;color:#4b5263;font-size:13px;line-height:1.8}
+
+  /* cases */
+  .cases{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .case{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;
+    cursor:pointer;transition:all .2s}
+  .case:hover{border-color:var(--primary);box-shadow:0 4px 14px rgba(58,109,240,.1)}
+  .case .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .case .id{font-weight:700;color:var(--primary);font-size:13px}
+  .case .interact{font-size:12px;color:var(--warn);font-weight:600}
+  .case .platform{font-size:11.5px;color:var(--muted);margin-bottom:10px}
+  .case .row{margin:6px 0;font-size:13px;line-height:1.65}
+  .case .row .lab{color:var(--muted);margin-right:4px}
+  .case .row .lab.tip{color:var(--accent);font-weight:600}
+
+  /* arena cards */
+  .arenas{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .arena{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+  .arena h4{margin:0 0 4px;font-size:14px}
+  .arena .meta{font-size:12px;color:var(--muted);margin-bottom:10px}
+  .arena .diag{font-size:13px;color:#374151;line-height:1.7}
+
+  /* details / accordion */
+  details{background:#fff;border:1px solid var(--line);border-radius:10px;
+    padding:12px 16px;margin-top:10px}
+  details[open]{box-shadow:var(--shadow)}
+  summary{cursor:pointer;font-weight:600;font-size:13.5px;list-style:none;
+    display:flex;align-items:center;justify-content:space-between}
+  summary::after{content:"▼";font-size:10px;color:var(--muted);transition:transform .2s}
+  details[open] summary::after{transform:rotate(180deg)}
+  details .body{margin-top:12px}
+
+  /* hot tags / scenes */
+  .scenes{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .scene{padding:6px 12px;background:#fff;border:1px solid var(--line);border-radius:18px;
+    font-size:12.5px;color:#374151;display:inline-flex;align-items:center;gap:6px}
+  .scene .v{color:var(--primary);font-weight:600}
+
+  /* responsive */
+  @media (max-width: 980px){
+    .sidebar{display:none}
+    .main{max-width:100%}
+    .container{padding:20px}
+    .findings,.cases,.arenas,.chart-grid{grid-template-columns:1fr}
+    .strategy{grid-template-columns:1fr}
+    .kpi-row{grid-template-columns:repeat(2,1fr)}
+  }
+
+  /* back to top */
+  .top-btn{position:fixed;right:24px;bottom:24px;width:40px;height:40px;border-radius:50%;
+    background:var(--primary);color:#fff;border:0;cursor:pointer;font-size:18px;
+    box-shadow:0 4px 14px rgba(58,109,240,.4);opacity:0;pointer-events:none;transition:opacity .2s}
+  .top-btn.show{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">AI 产品月报<span class="tag">元宝</span></div>
+    <div class="sub">2026 年 4 月 · 用户口碑分析</div>
+    <nav class="nav" id="nav">
+      <a href="#summary" class="active">核心结论</a>
+      <a href="#findings">关键发现</a>
+      <div class="group">数据洞察</div>
+      <a href="#voice">1. 整体声量盘子</a>
+      <a href="#scene">2. 场景结构与机会</a>
+      <a href="#pgc">3. PGC 驱动效果</a>
+      <a href="#cases">高互动爆款案例</a>
+      <a href="#arena">4. 阵地差异</a>
+      <div class="group">附录</div>
+      <a href="#metric">指标计算口径</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="container">
+
+      <!-- HERO -->
+      <div class="hero" id="summary">
+        <h1>AI 产品月报 · 用户口碑分析</h1>
+        <div class="meta">2026 年 4 月 · 腾讯元宝</div>
+        <div class="lead">
+          <strong>核心结论：</strong>元宝当前问题不在投入，而在"内容不戳中用户 + 自来水力薄弱"——必须放弃追逐豆包娱乐爆款，转而深耕<strong>"腾讯生态 × 技术发布 × 专业心智"</strong>差异化路径。
+        </div>
+      </div>
+
+      <!-- KPI row -->
+      <div class="kpi-row">
+        <div class="kpi yb">
+          <div class="name">元宝总声量</div><div class="val">58,184</div>
+          <small>行业第 3 梯队</small>
+        </div>
+        <div class="kpi">
+          <div class="name">PGC 投入</div><div class="val">5.2万</div>
+          <small>行业第 2，已达竞争级</small>
+        </div>
+        <div class="kpi">
+          <div class="name">UGC/PGC 杠杆</div><div class="val" style="color:var(--danger)">0.13×</div>
+          <small>垫底，豆包 7.14×</small>
+        </div>
+        <div class="kpi">
+          <div class="name">UGC 占比</div><div class="val" style="color:var(--warn)">11.4%</div>
+          <small>自来水弱</small>
+        </div>
+        <div class="kpi">
+          <div class="name">UGC 互动率</div><div class="val" style="color:var(--warn)">9.69</div>
+          <small>DS 347.9 / 豆包 180.2</small>
+        </div>
+      </div>
+
+      <!-- KEY FINDINGS -->
+      <section id="findings">
+        <h2 class="sec">关键发现</h2>
+
+        <div class="findings">
+          <div class="finding">
+            <div class="title"><span class="num">1</span>PGC 足额，UGC 几乎带不起</div>
+            <div class="desc">元宝 PGC 5.2 万（行业第 2），但 UGC/PGC 杠杆仅 0.13x（行业垫底），豆包为 7.14x。原因：<br>
+              · 用户画像偏 B 端 / 职场，分享欲低于 C 端娱乐用户<br>
+              · 缺失情感钩子，专业工具内容不易引发二创<br>
+              · 阵地偏微信公众号，传播效率远低于抖音/小红书
+            </div>
+          </div>
+          <div class="finding">
+            <div class="title"><span class="num">2</span>用户画像偏专业向，与市场主流错位</div>
+            <div class="desc">元宝用户是<b>"职场专业人士 + 学术/科技用户"</b>，与市场主流"娱乐+生活向"用户存在系统性错位。简单照抄豆包的搞笑/萌娃/谐音梗必然失效，必须用<b>专业内容差异化竞争</b>。</div>
+          </div>
+          <div class="finding">
+            <div class="title"><span class="num">3</span>高讨论意愿场景的 4 大特点</div>
+            <div class="desc">
+              · <b>强情绪宣泄</b>：情感倾诉 / 角色扮演<br>
+              · <b>强结果展示</b>：AI 生图/文/视频，激发模仿<br>
+              · <b>强反常识</b>：玩梗反差 / 颠覆性技术<br>
+              · <b>强场景代入</b>：同人 / 角色 / 故事激发想象力
+            </div>
+          </div>
+          <div class="finding">
+            <div class="title"><span class="num">4</span>切入点：从专业差异化激发共鸣</div>
+            <div class="desc">元宝目前主推专业工具类内容不易引发二创。应从<b>创意写作（学术故事性）、课业辅导（学习成果可炫耀）、职场工具与陪伴</b>角度切入，角色扮演借助腾讯内容生态（王者、QQ）做差异化。</div>
+          </div>
+          <div class="finding">
+            <div class="title"><span class="num">5</span>阵地优化策略</div>
+            <div class="desc">
+              · <b>微信公众号</b>：1.68 万 PGC 中 79% 零互动（营销矩阵号），浪费严重<br>
+              · <b>视频号</b>：Top 爆款仅 DS 的 1/14，需建科技媒体合作矩阵<br>
+              · <b>小红书</b>：有量无讨论，必须提供"想拍照分享"的内容<br>
+              · <b>知乎/微博</b>：有量无讨论，保留"行业洞察类"深度内容<br>
+              · <b>抖音</b>：豆包/DS 闭环已成，元宝暂时无法翻盘
+            </div>
+          </div>
+          <div class="finding">
+            <div class="title"><span class="num">6</span>Top 3 值得放大的用户口碑点</div>
+            <div class="desc">
+              · 写代码 / 调 bug / 讨论混元代码能力 → 联动 <b>CodeBuddy</b> 打造编程生态标杆<br>
+              · 写周报 / 邮件 / PPT / OKR → 打造<b>「职场文书三件套」</b>提示词包，借腾讯文档放大<br>
+              · 咨询升学 / 跳槽 / 决策 → 主打<b>「职场人生关键节点陪伴」</b>，腾讯职场生态协同
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 1 VOICE -->
+      <section id="voice">
+        <h2 class="sec">1. 整体声量盘子</h2>
+
+        <div class="card">
+          <h4 class="mini">五大品牌声量与杠杆对比</h4>
+          <div class="chart-grid">
+            <div id="chart-voice" class="chart"></div>
+            <div id="chart-leverage" class="chart"></div>
+          </div>
+
+          <h4 class="mini" style="margin-top:18px">数据明细</h4>
+          <table>
+            <thead><tr><th>品牌</th><th>总声量</th><th>UGC 占比</th><th>UGC 互动率</th><th>UGC/PGC 杠杆</th></tr></thead>
+            <tbody id="tbl-voice"></tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h4 class="mini">结论</h4>
+          <p><b>① 声量量级差距</b> — 元宝 PGC 投入不少，但总声量处于第 3 梯队，"推了但没人聊"</p>
+          <ul>
+            <li>元宝 PGC 投入已达竞争级别（51,556 条 ≈ 豆包 46,117 条，甚至更多），不是投入不够</li>
+            <li>❌ 总声量落差主因是 UGC 带不起来——元宝 UGC 只有 6,628 条，仅豆包的 2%</li>
+          </ul>
+          <p><b>② UGC 占比</b> — 元宝自来水能力弱：</p>
+          <ul>
+            <li>产品用户画像偏 B 端 / 职场，分享欲低于 C 端娱乐用户</li>
+            <li>缺失情感钩子 —— 专业工具类内容不易引发二创</li>
+            <li>阵地选择偏微信视频号（腾讯生态内）—— 微信转发传播效率远低于抖音/小红书</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SECTION 2 SCENE -->
+      <section id="scene">
+        <h2 class="sec">2. 场景结构与机会矩阵</h2>
+
+        <h3 class="sub-sec">2.1 场景竞争策略</h3>
+        <p class="muted">元宝应坚持"专业科技"人设，在 3 类赛道错位竞争：</p>
+        <div class="strategy">
+          <div class="strat a">
+            <span class="badge">策略 A</span>
+            <h4>红海场景差异化突围</h4>
+            <ul>
+              <li><b>AI 绘画</b>：市场在生成头像/写真，元宝可做论文插图生成指令 + 与即梦横向对比</li>
+              <li><b>角色扮演</b>：联动腾讯生态资产（王者/QQ/微信文档）做不可复制的差异化</li>
+              <li><b>家庭育儿</b>：把育儿当作业辅导工具——几何题录屏 / 错题本 / 家长陪读脚本</li>
+            </ul>
+          </div>
+          <div class="strat b">
+            <span class="badge">策略 B</span>
+            <h4>放大优势 · 建立主导</h4>
+            <ul>
+              <li><b>课业辅导 + 知识科普</b>：联动腾讯文档 + 微信公众号 KOL 建立"学习搭子"心智</li>
+              <li><b>行业动态</b>：充分放大腾讯混元发布节奏</li>
+            </ul>
+          </div>
+          <div class="strat c">
+            <span class="badge">策略 C</span>
+            <h4>守住护城河</h4>
+            <ul>
+              <li><b>办公场景</b>：与 CodeBuddy / 腾讯会议 / 腾讯文档深度协同，产出编程/会议/调研标杆案例库</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 class="sub-sec" style="margin-top:24px">2.2 全市场场景优先级排序</h3>
+        <p class="muted">按 priority_score 降序，反映用户讨论热度 + 互动深度的综合权重。<b>核心观察：趣味玩梗 / 课业辅导 / AI绘画 / 家庭育儿</b> 是用户讨论 AI 时的四大主战场，合计贡献全市场 30%+ 的热度。</p>
+
+        <div class="card">
+          <div id="chart-priority" class="chart" style="height:380px"></div>
+          <details style="margin-top:14px">
+            <summary>查看 12 个场景的完整数据明细</summary>
+            <div class="body">
+              <table>
+                <thead><tr><th>排名</th><th>场景</th><th>UGC 声量</th><th>平均互动率</th><th>全市场热度</th><th>具体内容</th></tr></thead>
+                <tbody id="tbl-priority"></tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+
+        <h3 class="sub-sec" style="margin-top:24px">2.3 本品 vs 竞品的 UGC 声量分布</h3>
+
+        <div class="tabs" id="scene-tabs">
+          <div class="tab active" data-target="t-brand">2.3.1 各品牌 Top 3 场景（品牌人设）</div>
+          <div class="tab" data-target="t-share">2.3.2 Top 12 热门场景的市场份额</div>
+        </div>
+
+        <div class="tab-panel active" id="t-brand">
+          <table>
+            <thead><tr><th>品牌</th><th>Top 1 场景</th><th>Top 2 场景</th><th>Top 3 场景</th><th>品牌人设关键词</th></tr></thead>
+            <tbody id="tbl-brand"></tbody>
+          </table>
+        </div>
+
+        <div class="tab-panel" id="t-share">
+          <p class="muted" style="margin-bottom:10px">market_share = 该品牌在场景的 UGC 帖数 / 场景全部 UGC 帖数。<b>核心观察：豆包在 7/12 个热门场景占据 50%+ 市场份额（超级主导），DeepSeek 在行业动态、角色扮演突围，千问在出行规划反超豆包，元宝目前没有任何场景的市场份额超过 10%。</b></p>
+          <div id="chart-share" class="chart" style="height:480px"></div>
+          <details style="margin-top:14px">
+            <summary>查看完整市场份额数据</summary>
+            <div class="body">
+              <table>
+                <thead><tr><th>场景</th><th>元宝</th><th>豆包</th><th>DeepSeek</th><th>千问</th><th>夸克</th><th>主导者</th></tr></thead>
+                <tbody id="tbl-share"></tbody>
+              </table>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- SECTION 3 PGC -->
+      <section id="pgc">
+        <h2 class="sec">3. PGC 驱动效果</h2>
+
+        <h3 class="sub-sec">3.1 行业讨论热点与元宝策略</h3>
+        <div class="card">
+          <h4 class="mini">行业规律</h4>
+          <p><b>① 行业 PGC 风险与 UGC 机会</b></p>
+          <ul>
+            <li>全行业 Agent 的 PGC 普遍过剩，5 家品牌都在推 Agent 但用户普遍不接，Agent 营销叙事需要重新设计；不要跟风堆 PGC</li>
+            <li>角色扮演市场全行业隐藏宝藏，全行业都没充分推 PGC，元宝可先发制人建立角色市场心智</li>
+          </ul>
+          <p><b>② 高讨论意愿特质</b></p>
+          <ul>
+            <li>强情绪宣泄——用户使用 AI 进行情感倾诉或角色扮演</li>
+            <li>强结果展示——AI 生图、文、视频，晒出自己的产出，并激发模仿/讨论</li>
+            <li>强反常识——玩梗（搞笑反差），颠覆性技术</li>
+            <li>强场景代入——同人 / 角色 / 故事激发想象力</li>
+          </ul>
+          <p><b>③ 元宝策略</b></p>
+          <ul>
+            <li>用户自发讨论编程开发最多，且 UGC 帖子与 PGC 高度吻合，是唯一「双向匹配」场景，加大 PGC 投入，联动 CodeBuddy 打造编程生态</li>
+            <li>职场场景下用户自发用元宝写周报/邮件/PPT，但官方几乎没推；腾讯文档生态可天然放大，打造「职场文书三件套」（周报·邮件·PPT），「打工人提示词模板包」，主打「职场人生关键节点陪伴」</li>
+            <li>行业动态 DeepSeek 已主导，元宝跟推无效，从追赶式报道改为节点式报道（混元发布）</li>
+            <li>角色扮演市场利用元宝独家腾讯 IP 资产做 AI 还原/致敬系列（QQ 历史、王者）</li>
+          </ul>
+        </div>
+
+        <h4 class="mini">3.1 竞品速览：PGC vs UGC 画像对比</h4>
+        <table>
+          <thead><tr><th>品牌</th><th>PGC Top 5（营销）</th><th>营销画像</th><th>UGC Top 5（用户）</th><th>用户画像</th></tr></thead>
+          <tbody id="tbl-compete"></tbody>
+        </table>
+
+        <h3 class="sub-sec" style="margin-top:24px">3.2 元宝功能组合建议</h3>
+        <table>
+          <thead><tr><th>分类</th><th>关联功能</th><th>场景</th><th>元宝行动</th></tr></thead>
+          <tbody id="tbl-func"></tbody>
+        </table>
+
+        <h3 class="sub-sec" style="margin-top:24px" id="cases">3.3 高互动特质 · 爆款案例</h3>
+
+        <div class="tabs" id="case-tabs">
+          <div class="tab active" data-target="c-emotion">强情绪宣泄</div>
+          <div class="tab" data-target="c-result">强结果展示</div>
+          <div class="tab" data-target="c-anti">强反常识</div>
+          <div class="tab" data-target="c-immersion">强场景代入</div>
+        </div>
+
+        <div class="tab-panel active" id="c-emotion">
+          <div class="cases">
+            <div class="case">
+              <div class="head"><span class="id">案例 02</span><span class="interact">互动 81,273</span></div>
+              <div class="platform">DeepSeek · 抖音</div>
+              <div class="row"><span class="lab">📝 帖文：</span>"你的痛苦成立 #Deepseek"</div>
+              <div class="row"><span class="lab">🔍 爆款机制：</span>5 字心理疗愈金句 + AI 背书，被用户当"被理解"的证据截图传播</div>
+              <div class="row"><span class="lab tip">💡 元宝启示：</span>元宝可批量产出"职场金句卡片"+ 微信生态分享（朋友圈天然传播）</div>
+            </div>
+            <div class="case">
+              <div class="head"><span class="id">案例 01</span><span class="interact">互动 284,101</span></div>
+              <div class="platform">DeepSeek · 抖音</div>
+              <div class="row"><span class="lab">📝 帖文：</span>"真的很对不起…#孤独的鸟 #DeepSeek"</div>
+              <div class="row"><span class="lab">🔍 爆款机制：</span>极简情绪文案 + 拟人化共鸣（"孤独的鸟"），用户在评论区接力情绪宣泄</div>
+              <div class="row"><span class="lab tip">💡 元宝启示：</span>元宝可做"职场孤独鸟"系列：用极简文案触发打工人情绪共鸣</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="c-result">
+          <div class="cases">
+            <div class="case">
+              <div class="head"><span class="id">案例 04</span><span class="interact">互动 170,712</span></div>
+              <div class="platform">豆包 · 抖音 · C04 视频创作</div>
+              <div class="row"><span class="lab">📝 帖文：</span>"今天是嬷嬷 #aigc #豆包 #即梦ai #可灵ai 学生 ai 练习作业"</div>
+              <div class="row"><span class="lab">🔍 爆款机制：</span>AI 还原经典 IP 角色，结果可炫耀 + IP 情怀双 buff</div>
+              <div class="row"><span class="lab tip">💡 元宝启示：</span>元宝可联动腾讯 IP（王者/英雄联盟）做 AI 还原经典英雄</div>
+            </div>
+            <div class="case">
+              <div class="head"><span class="id">案例 03</span><span class="interact">互动 385,340</span></div>
+              <div class="platform">豆包 · 抖音 · C02/C03 创意+绘画</div>
+              <div class="row"><span class="lab">📝 帖文：</span>"最近非常火的 theone 陪伴教程 ai 设定教程我都给大家整理好了"</div>
+              <div class="row"><span class="lab">🔍 爆款机制：</span>把"指令模板"包装成可复制的爆款，用户抄了就能产出同款</div>
+              <div class="row"><span class="lab tip">💡 元宝启示：</span>元宝可整理"职场提示词模板包"（周报/邮件/PPT 三件套）</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="c-anti">
+          <div class="cases">
+            <div class="case">
+              <div class="head"><span class="id">案例 05</span><span class="interact">互动 1,031,818</span></div>
+              <div class="platform">豆包 · 抖音 · F01 趣味玩梗</div>
+              <div class="row"><span class="lab">📝 帖文：</span>"#豆包 #内容过于真实 #ai #搞笑 #模仿"（AI 模仿真人神还原）</div>
+              <div class="row"><span class="lab">🔍 爆款机制：</span>AI 模仿真人达到"过于真实"反差效果，颠覆"AI 不像人"常识，引爆全平台</div>
+              <div class="row"><span class="lab tip">💡 元宝启示：</span>元宝可做"混元模仿老板讲话"系列，戳中职场人情绪</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="c-immersion">
+          <div class="cases">
+            <div class="case">
+              <div class="head"><span class="id">案例 06</span><span class="interact">互动 158,697</span></div>
+              <div class="platform">豆包 · 抖音 · D04 家庭育儿（致敬）</div>
+              <div class="row"><span class="lab">📝 帖文：</span>"汶川地震中的最美教师袁文婷，她放弃逃生机会... 豆包 AI 生成"</div>
+              <div class="row"><span class="lab">🔍 爆款机制：</span>历史人物 AI 还原 + 真实情感故事 + 致敬场景代入</div>
+              <div class="row"><span class="lab tip">💡 元宝启示：</span>元宝可做"AI 重现腾讯 25 年"系列，绑定企业历史 IP 情感</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4 ARENA -->
+      <section id="arena">
+        <h2 class="sec">4. 阵地差异</h2>
+
+        <h3 class="sub-sec">4.1 元宝阵地优化策略</h3>
+        <div class="arenas">
+          <div class="arena">
+            <h4>① 抖音不是营销战场，是产品力的复利场</h4>
+            <div class="diag">
+              元宝在抖音用预算无法翻盘——它奖励的是"产品自带传播性 × 海量用户基数"的复利效应，豆包已有用户基数 + 二创闭环，DeepSeek 靠"国产之光"叙事。<br>
+              <span style="color:var(--accent)">✅ 等产品力升级后战略反攻</span>：豆包式娱乐爆款依赖"用户用完想发"的产品体验，是产品问题不是营销问题。
+            </div>
+          </div>
+          <div class="arena">
+            <h4>② 小红书"有量没质"≠ 破圈（千问反面教材）</h4>
+            <div class="diag">
+              小红书的爆款门槛比抖音低，但奖励的是"高质量精品种草"，铺量等同于浪费，元宝和千问都在小红书铺量但互动差。<br>
+              <span style="color:var(--accent)">✅ 重做"50-100 条爆款种子"</span>：对标 DS 在小红书"AI 学术写作 / 学习搭子"的精品打法，必须提供给用户"想拍照分享"的内容：教程截图、对比图、成果展示——而非纯文字推荐。
+            </div>
+          </div>
+          <div class="arena">
+            <h4>③ 知乎/微博是元宝的"假阵地"</h4>
+            <div class="diag">
+              同样阵地 DS 讨论度更高，元宝有量但内容有问题。<br>
+              <span style="color:var(--accent)">✅ 改铺量为精品</span>：仅保留"行业洞察类"深度内容（如对标 DS 在知乎的技术权威人设）。
+            </div>
+          </div>
+          <div class="arena">
+            <h4>④ 没有形成"腾讯生态护城河"</h4>
+            <div class="diag">
+              视频号上 DS / 夸克都比元宝强。微信公众号存在最大资源浪费，内容封闭生态 + 深度分析文章 + 矩阵号洗稿，导致公众号大投入但没带动 UGC；微信视频号是头部 PR 阵地，但元宝在视频号的爆款能力弱于竞品。<br>
+              <span style="color:var(--accent)">✅ 与腾讯科技/腾讯云等内部官号深度联动</span><br>
+              <span style="color:var(--accent)">✅ 建立 10-15 家科技媒体合作矩阵</span>：对标 DS 借势"腾讯科技 5 万互动"打法<br>
+              <span style="color:var(--accent)">✅ 绑定月度产品发布节奏</span>：每月混元/Agent 等技术发布同步登陆视频号
+            </div>
+          </div>
+        </div>
+
+        <h3 class="sub-sec" style="margin-top:24px">4.2 本品 vs 竞品 阵地 PGC 效率对比</h3>
+        <table>
+          <thead><tr><th>阵地</th><th>元宝占比</th><th>最强竞品</th><th>诊断（元宝 vs 最强竞品：内容与效率对比）</th></tr></thead>
+          <tbody id="tbl-arena"></tbody>
+        </table>
+      </section>
+
+      <!-- APPENDIX -->
+      <section id="metric">
+        <h2 class="sec">附录 · 指标计算口径</h2>
+        <table>
+          <thead><tr><th>指标</th><th>计算公式</th><th>含义</th></tr></thead>
+          <tbody id="tbl-metric"></tbody>
+        </table>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<button class="top-btn" id="topBtn" title="回到顶部">↑</button>
+
+<script>
+/* ============== DATA ============== */
+const dataVoice = [
+  ["豆包","375,434","87.7%","180.22","7.14x 🏆","gold"],
+  ["DeepSeek","113,278","20.4%","347.90 🏆","0.26x",""],
+  ["元宝","58,184","11.4% ⚠️","9.69 ⚠️","0.13x 🔴","yb"],
+  ["千问","40,068","42.1%","6.00","0.73x",""],
+  ["夸克","11,533","57.2% 🟡","138.11","1.34x 🥈",""],
+];
+
+const dataPriority = [
+  ["1","趣味玩梗","5,653","640.2","0.439","用 AI 当整活素材生成器"],
+  ["2","课业辅导","3,459","680.8","0.286","K12 知识点讲解 / 错题分析"],
+  ["3","AI绘画","8,981","252.9","0.276","婚纱照/写真/头像生成，用户抄指令复刻爆款图"],
+  ["4","家庭育儿","8,035","253.1","0.247","AI 生成「宝宝照片、亲子背景图」"],
+  ["5","技术讨论","4,608","425.2","0.238","提示词技巧交流"],
+  ["6","创意写作","4,913","378.4","0.226","theone 人设创作：写「角色设定/人设卡/陪伴教程」"],
+  ["7","知识科普","6,969","238.4","0.202","「为什么/是什么」通俗解释"],
+  ["8","陪聊","7,625","186.7","0.173","「AI 对话记录」"],
+  ["9","出行规划","4,244","264.2","0.136","AI 旅游攻略"],
+  ["10","行业动态","3,909","268.5","0.127","大模型发布讨论"],
+  ["11","角色扮演","2,314","394.6","0.111","调教 AI 男友女友 / 陪伴人设 / 微信角色卡"],
+  ["12","健康医疗","3,679","213.9","0.095","艺人 IP × 健身 × AI 解读 的娱乐化健康内容"],
+];
+
+const dataBrand = [
+  ["元宝","编程开发 (13.9%)","知识科普 (10.2%)","购物决策 (7.0%)","专业科技 / 工具向","yb"],
+  ["豆包","AI绘画 (11.8%)","家庭育儿 (11.3%)","生活记录陪聊 (11.1%)","娱乐生活 / 情感向",""],
+  ["DeepSeek","行业动态 (14.5%)","创意写作 (8.6%)","编程开发 (8.6%)","技术开发 / 行业向",""],
+  ["千问","模型测评 (15.0%)","出行规划 (13.5%)","知识科普 (10.2%)","测评学习 / 决策向",""],
+  ["夸克","知识科普 (13.3%)","创意写作 (9.2%)","课业辅导 (9.1%)","工具/搜索/网盘场景向",""],
+];
+
+const dataShare = [
+  ["趣味玩梗","1.3%","89.8% 🏆","4.1%","4.6%","0.2%","豆包 90%"],
+  ["课业辅导","6.8%","57.6% 🏆","14.0%","20.2%","1.4%","豆包 58%"],
+  ["AI绘画","0.8%","81.1% 🏆","2.0%","16.0%","0.1%","豆包 81%"],
+  ["家庭育儿","1.0%","86.1% 🏆","4.7%","8.0%","0.2%","豆包 86%"],
+  ["技术讨论","3.4%","65.1% 🏆","24.2%","7.2%","0.1%","豆包 65%"],
+  ["创意写作","4.0%","57.2% 🏆","29.9%","6.5%","2.5%","豆包 57%"],
+  ["知识科普","8.6%","46.6% 🏆","18.7%","24.2%","1.9%","豆包 47%"],
+  ["生活记录陪聊","1.4%","89.8% 🏆","6.5%","2.2%","0.2%","豆包 90%"],
+  ["出行规划","2.0%","38.9%","6.3%","52.5% 🏆","0.3%","千问 52%"],
+  ["行业动态","7.9%","22.2%","63.0% 🏆","5.8%","1.2%","DeepSeek 63%"],
+  ["角色扮演","4.1%","42.8%","49.3% 🏆","3.4%","0.4%","DeepSeek 49%"],
+  ["健康医疗","2.4%","60.1% 🏆","9.9%","26.9%","0.7%","豆包 60%"],
+];
+
+const dataCompete = [
+  ["元宝","编程开发 / 知识科普 / 行业动态 / 出行规划 / 家庭育儿","专业·学习·工具","编程开发 / 文书写作 / 知识科普 / 人生决策 / 行业动态","职场专业","yb"],
+  ["豆包","编程开发 / 行业动态 / 知识科普 / 健康医疗 / 出行规划","专业能力","AI绘画 / 家庭育儿 / 生活记录陪聊 / 趣味玩梗 / 知识科普","娱乐创作",""],
+  ["DeepSeek","行业动态 / 编程开发 / 知识科普 / 技术讨论 / 财务理财","技术权威","行业动态 / 创意写作 / 编程开发 / 知识科普 / 角色扮演","技术发烧",""],
+  ["千问","出行规划 / 知识科普 / 模型测评 / 编程开发 / 行业动态","决策辅助","模型测评 / 出行规划 / 知识科普 / AI绘画 / 健康医疗","测评决策",""],
+  ["夸克","知识科普 / 种草·测评 / 自媒体 / 创意写作 / 课业辅导","学习工具类","知识科普 / 创意写作 / 影视书籍 / 编程开发 / AI绘画","搜索/资源向",""],
+];
+
+const dataFunc = [
+  ["增强产品力","角色市场（豆包/DS）","角色扮演 → theone/人设","是高潜赛道，元宝若有产品力可放大"],
+  ["增强产品力","AI 绘画（豆包）","AI 绘画 → 头像/写真","用户把绘画做娱乐用途，元宝难以正面切入"],
+  ["增强产品力","语音 + 角色","生活记录 → 日常/陪聊","陪聊场景需「语音+角色」双驱动，元宝若要进必须两条腿"],
+  ["已有产品力，需营销发力","Agent（元宝）","行业动态 → 腾讯混元/Agent","元宝在该场景活跃但用户讨论偏少，营销叙事需优化，从「技术发布」转向「用户价值」"],
+  ["已有产品力，需营销发力","推理（元宝UGC）","编程 → 代码/模型","元宝推理能力已被用户认可，联动 CodeBuddy 可放大"],
+];
+
+const dataArena = [
+  ["微信公众号","32.8%","夸克","元宝内容太硬：元宝 1.68 万条 PGC 主打技术讨论/行业动态；夸克公众号主打知识科普/自媒体文案"],
+  ["微信视频号","0.2%","夸克","元宝内容偏技术（行业动态）但元宝机构 PR 打爆款能力较弱"],
+  ["小红书","27.4%","豆包","元宝铺量 1,818 条但内容无差异化：主推编程开发/创意写作（严肃内容）；豆包/DeepSeek 只用一半量推兜底场景+知识科普/AI绘画。元宝量是豆包的 1.1 倍，效率是豆包的 6%，无「种草感」内容"],
+  ["抖音 app","33.2%","夸克","豆包/DeepSeek 用 16-48 万条内容建立「AI 娱乐工具」认知"],
+  ["知乎","15.6%","DeepSeek","元宝在知乎推技术内容但无传播力：元宝主推知识科普/编程开发/行业动态；DeepSeek 量少 5 倍（521 条）DeepSeek 靠少而精建技术权威，元宝靠多而水铺噪音，知乎用户不响应铺量"],
+  ["微博","20.8%","豆包","元宝用微博发编程/科普内容完全无效，豆包量少却靠知识科普，元宝账号无公信力、互动为零说明内容未被转发"],
+];
+
+const dataMetric = [
+  ["全市场热度 priority_score","归一化(场景UGC声量) × 归一化(场景UGC平均互动率)，已排除 H05","反映该场景在全市场的火热程度（0-1）"],
+  ["本品占比 self_share","元宝在该场景的UGC帖数 / 元宝UGC总帖数","元宝品牌内部该场景的内容比重"],
+  ["相对优势 relative_advantage","本品占比 − max(各竞品在该场景的占比)","与最强竞品的差距，>0 优势 / <0 劣势"],
+  ["市场份额 market_share","品牌在该场景的UGC帖数 / 该场景全部UGC帖数","品牌在该场景的真实声量占比"],
+  ["HHI 集中度","Σ(各品牌market_share²)，越大越垄断","<0.25 蓝海 / 0.25-0.35 中度 / 0.35-0.5 寡头 / >0.5 红海"],
+];
+
+/* ============== TABLE RENDER ============== */
+function fillRows(tbodyId, rows){
+  const tb = document.getElementById(tbodyId);
+  tb.innerHTML = rows.map(r=>{
+    const cls = (r[r.length-1]==='yb' || r[r.length-1]==='gold') ? r.pop() : '';
+    const trCls = cls==='yb' ? 'row-yb' : '';
+    return `<tr class="${trCls}">${r.map(c=>`<td>${c}</td>`).join('')}</tr>`;
+  }).join('');
+}
+
+fillRows('tbl-voice', dataVoice.map(r=>[...r]));
+fillRows('tbl-priority', dataPriority);
+fillRows('tbl-brand', dataBrand.map(r=>[...r]));
+fillRows('tbl-share', dataShare);
+fillRows('tbl-compete', dataCompete.map(r=>[...r]));
+fillRows('tbl-func', dataFunc);
+fillRows('tbl-arena', dataArena);
+fillRows('tbl-metric', dataMetric);
+
+/* ============== CHARTS ============== */
+const brandColor = {元宝:'#3a6df0',豆包:'#ff7a45',DeepSeek:'#7c3aed',千问:'#0ea5e9',夸克:'#10b981'};
+
+// Voice bar
+echarts.init(document.getElementById('chart-voice')).setOption({
+  title:{text:'品牌总声量对比',left:'center',textStyle:{fontSize:13,fontWeight:600}},
+  grid:{top:50,left:60,right:30,bottom:30},
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},
+  xAxis:{type:'category',data:['豆包','DeepSeek','元宝','千问','夸克'],axisTick:{show:false}},
+  yAxis:{type:'value',name:'声量',splitLine:{lineStyle:{color:'#eee'}}},
+  series:[{
+    type:'bar',barWidth:36,
+    data:[
+      {value:375434,itemStyle:{color:brandColor.豆包}},
+      {value:113278,itemStyle:{color:brandColor.DeepSeek}},
+      {value:58184,itemStyle:{color:brandColor.元宝}},
+      {value:40068,itemStyle:{color:brandColor.千问}},
+      {value:11533,itemStyle:{color:brandColor.夸克}},
+    ],
+    label:{show:true,position:'top',formatter:p=>p.value.toLocaleString(),fontSize:11}
+  }]
+});
+
+// Leverage scatter style bar
+echarts.init(document.getElementById('chart-leverage')).setOption({
+  title:{text:'UGC/PGC 杠杆 (越大越能带火)',left:'center',textStyle:{fontSize:13,fontWeight:600}},
+  grid:{top:50,left:60,right:30,bottom:30},
+  tooltip:{trigger:'axis'},
+  xAxis:{type:'category',data:['豆包','夸克','千问','DeepSeek','元宝']},
+  yAxis:{type:'value',name:'倍',splitLine:{lineStyle:{color:'#eee'}}},
+  series:[{
+    type:'bar',barWidth:36,
+    data:[
+      {value:7.14,itemStyle:{color:brandColor.豆包}},
+      {value:1.34,itemStyle:{color:brandColor.夸克}},
+      {value:0.73,itemStyle:{color:brandColor.千问}},
+      {value:0.26,itemStyle:{color:brandColor.DeepSeek}},
+      {value:0.13,itemStyle:{color:brandColor.元宝}},
+    ],
+    label:{show:true,position:'top',formatter:'{c}x',fontSize:11}
+  }]
+});
+
+// Priority bar - horizontal
+echarts.init(document.getElementById('chart-priority')).setOption({
+  title:{text:'12 个场景的全市场热度排序 (priority_score)',left:'center',textStyle:{fontSize:13,fontWeight:600}},
+  grid:{top:50,left:90,right:60,bottom:20},
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'},
+    formatter:p=>{const d=dataPriority[dataPriority.length-1-p[0].dataIndex];
+      return `<b>${d[1]}</b><br/>UGC 声量：${d[2]}<br/>平均互动率：${d[3]}<br/>全市场热度：${d[4]}`}
+  },
+  xAxis:{type:'value',max:0.5,splitLine:{lineStyle:{color:'#eee'}}},
+  yAxis:{type:'category',data:dataPriority.map(d=>d[1]).reverse(),axisTick:{show:false}},
+  series:[{
+    type:'bar',barWidth:18,
+    data:dataPriority.map((d,i)=>{
+      const v=parseFloat(d[4]);
+      const top4 = i<4;
+      return {value:v,itemStyle:{
+        color:top4?'#3a6df0':'#9eb6f0',
+        borderRadius:[0,4,4,0]
+      }};
+    }).reverse(),
+    label:{show:true,position:'right',formatter:p=>p.value.toFixed(3),fontSize:11}
+  }]
+});
+
+// Share stacked
+const shareCats = dataShare.map(d=>d[0]);
+const series = ['元宝','豆包','DeepSeek','千问','夸克'].map((b,i)=>({
+  name:b,type:'bar',stack:'share',
+  emphasis:{focus:'series'},
+  itemStyle:{color:brandColor[b]},
+  data: dataShare.map(d=>parseFloat(String(d[i+1]).replace(/[^0-9.]/g,'')))
+}));
+echarts.init(document.getElementById('chart-share')).setOption({
+  title:{text:'Top 12 热门场景的市场份额分布 (%)',left:'center',textStyle:{fontSize:13,fontWeight:600}},
+  legend:{top:24,itemWidth:12,itemHeight:8,textStyle:{fontSize:12}},
+  grid:{top:60,left:90,right:30,bottom:20},
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:p=>{
+    let s = `<b>${p[0].axisValue}</b><br/>`;
+    p.forEach(it=>{s+=`${it.marker}${it.seriesName}：${it.value}%<br/>`});
+    return s;
+  }},
+  xAxis:{type:'value',max:100,axisLabel:{formatter:'{value}%'},splitLine:{lineStyle:{color:'#eee'}}},
+  yAxis:{type:'category',data:shareCats,axisTick:{show:false}},
+  series
+});
+
+/* ============== TABS ============== */
+function bindTabs(containerId){
+  const c = document.getElementById(containerId);
+  const tabs = c.querySelectorAll('.tab');
+  tabs.forEach(t=>t.addEventListener('click',()=>{
+    tabs.forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    const target = t.dataset.target;
+    const parent = c.parentElement;
+    parent.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById(target).classList.add('active');
+    // Resize charts when becoming visible
+    setTimeout(()=>window.dispatchEvent(new Event('resize')),50);
+  }));
+}
+bindTabs('scene-tabs');
+bindTabs('case-tabs');
+
+/* ============== NAV ACTIVE on scroll ============== */
+const navLinks = document.querySelectorAll('#nav a');
+const sections = Array.from(navLinks).map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+function onScroll(){
+  const y = window.scrollY + 120;
+  let cur = 0;
+  sections.forEach((s,i)=>{ if (s.offsetTop <= y) cur = i; });
+  navLinks.forEach(a=>a.classList.remove('active'));
+  if (navLinks[cur]) navLinks[cur].classList.add('active');
+  // Top button
+  document.getElementById('topBtn').classList.toggle('show', window.scrollY>400);
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+
+navLinks.forEach(a=>a.addEventListener('click',e=>{
+  e.preventDefault();
+  const t = document.querySelector(a.getAttribute('href'));
+  if (t) window.scrollTo({top:t.offsetTop-16,behavior:'smooth'});
+}));
+document.getElementById('topBtn').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+window.addEventListener('resize',()=>{
+  document.querySelectorAll('.chart, .chart-sm').forEach(el=>{
+    const ins = echarts.getInstanceByDom(el); if (ins) ins.resize();
+  });
+});
+</script>
+</body>
+</html>
