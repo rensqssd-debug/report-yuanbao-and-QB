@@ -284,7 +284,7 @@
         </div>
 
         <div class="finding">
-          <div class="idx">3</div>
+          <div class="idx">2</div>
           <div class="body">
             <h4>高讨论意愿的场景特点</h4>
             <ul>
@@ -298,7 +298,7 @@
         </div>
 
         <div class="finding">
-          <div class="idx">4</div>
+          <div class="idx">3</div>
           <div class="body">
             <h4>阵地优化策略</h4>
             <ul>
@@ -310,7 +310,7 @@
         </div>
 
         <div class="finding">
-          <div class="idx">5</div>
+          <div class="idx">4</div>
           <div class="body">
             <h4>元宝两大机会点</h4>
             <ul>
@@ -453,7 +453,7 @@
           </tbody>
         </table>
       </div>
-      <p class="note">注：按全市场热度降序排列，反映用户讨论热度+互动深度</p>
+      <p class="note">注：<br/>• 按全市场热度降序排列，反映用户讨论热度+互动深度，已排除广告、无明显场景分类的数据。<br/>• 全市场热度 = 归一化(场景 UGC 声量) × 归一化(场景 UGC 平均互动率) =（场景 UGC 声量 / 最大声量）×（场景 UGC 平均互动率 / 最大互动率）</p>
 
 
     </section>
@@ -512,7 +512,7 @@
           <thead><tr><th>账号类型</th><th>代表案例</th><th>品牌</th><th>互动量</th><th>经典贴</th></tr></thead>
           <tbody>
             <tr><td>个人 KOL</td><td>数字生命卡兹克（5 篇）</td><td>豆包</td><td>总互动量 110,835，平均 91,884</td><td>个人观察 + 实例展示，《分享我用了 2 年的深度研究 Prompt，半小时帮你搞懂任何陌生领域》</td></tr>
-            <tr><td>营销号</td><td>薇薇的选择（558 帖）</td><td>千问</td><td>平均互动量 0.1，最高仅 6</td><td>秒识花卉 + 深度解析
+            <tr><td>营销号</td><td>薇薇的选择（558 篇）</td><td>千问</td><td>平均互动量 0.1，最高仅 6</td><td>秒识花卉 + 深度解析
 上传花的照片，千问一秒精准识别品种，还能告诉你它是哪个省的省花</td></tr>
             <tr><td>官方账号</td><td>腾讯元宝小红书官方账号（31 篇）</td><td>元宝</td><td>平均互动量 6，83.9% 零互动</td><td>Hy3 preview 来了，元宝已就位！</td></tr>
           </tbody>
@@ -692,10 +692,10 @@ ds 容易莫名其妙的蹦出一些专业术语
           <thead><tr><th style="width:18%;">指标</th><th style="width:48%;">计算公式</th><th>含义</th></tr></thead>
           <tbody>
             <tr><td>全市场热度</td><td>归一化(场景 UGC 声量) × 归一化(场景 UGC 平均互动率) =（场景 UGC 声量 / 最大声量）×（场景 UGC 平均互动率 / 最大互动率），已排除广告、无明显场景分类的数据</td><td>反映该场景在全市场的火热程度（0-1）</td></tr>
-            <tr><td>本品占比 self_share</td><td>元宝在该场景的 UGC 帖数 / 元宝 UGC 总帖数</td><td>元宝品牌内部该场景的内容比重</td></tr>
-            <tr><td>相对优势 relative_advantage</td><td>本品占比 − max(各竞品在该场景的占比)</td><td>与最强竞品的差距，&gt;0 优势 / &lt;0 劣势</td></tr>
-            <tr><td>市场份额 market_share</td><td>品牌在该场景的 UGC 帖数 / 该场景全部 UGC 帖数</td><td>品牌在该场景的真实声量占比</td></tr>
-            <tr><td>HHI 集中度</td><td>Σ(各品牌 market_share²)，越大越垄断</td><td>&lt;0.25 蓝海 / 0.25-0.35 中度 / 0.35-0.5 寡头 / &gt;0.5 红海</td></tr>
+            <tr><td>本品占比</td><td>元宝在该场景的 UGC 帖数 / 元宝 UGC 总帖数</td><td>元宝品牌内部该场景的内容比重</td></tr>
+            <tr><td>相对优势</td><td>本品占比 − max(各竞品在该场景的占比)</td><td>与最强竞品的差距，&gt;0 优势 / &lt;0 劣势</td></tr>
+            <tr><td>市场份额</td><td>品牌在该场景的 UGC 帖数 / 该场景全部 UGC 帖数</td><td>品牌在该场景的真实声量占比</td></tr>
+            <tr><td>HHI 集中度</td><td>Σ(各品牌 市场份额²)，越大越垄断</td><td>&lt;0.25 蓝海 / 0.25-0.35 中度 / 0.35-0.5 寡头 / &gt;0.5 红海</td></tr>
           </tbody>
         </table>
       </div>
